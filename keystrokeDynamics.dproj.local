@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899.12.30 00:00:00.000.322,C:\Users\asyry\OneDrive\Документы\KeystrokeDynamics\Data_Time.pas=C:\Users\asyry\OneDrive\Документы\KeystrokeDynamics\Unit2.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.009,C:\Users\Alex\Documents\Embarcadero\Studio\Projects\UnitKeystrokeDynamics.dfm=C:\Users\Alex\Documents\Embarcadero\Studio\Projects\Unit8.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.986,C:\Users\Alex\OneDrive\Документы\KeystrokeDynamics\UnitKeystrokeDynamics.pas=C:\Users\Alex\Documents\Embarcadero\Studio\Projects\UnitKeystrokeDynamics.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.009,C:\Users\Alex\Documents\Embarcadero\Studio\Projects\UnitKeystrokeDynamics.pas=C:\Users\Alex\Documents\Embarcadero\Studio\Projects\Unit8.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.390,=C:\Users\asyry\OneDrive\Документы\KeystrokeDynamics\Unit2.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.419,=C:\Users\asyry\OneDrive\Документы\KeystrokeDynamics\Unit2.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.653,C:\Users\asyry\OneDrive\Документы\KeystrokeDynamics\Unit2.pas=C:\Users\asyry\OneDrive\Документы\KeystrokeDynamics\Feature_Extractor.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.986,C:\Users\Alex\OneDrive\Документы\KeystrokeDynamics\UnitKeystrokeDynamics.dfm=C:\Users\Alex\Documents\Embarcadero\Studio\Projects\UnitKeystrokeDynamics.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.265,=C:\Users\asyry\OneDrive\Документы\KeystrokeDynamics\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.782,=C:\Users\asyry\OneDrive\Документы\KeystrokeDynamics\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.052,=C:\Users\asyry\OneDrive\Документы\KeystrokeDynamics\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.206,C:\Users\asyry\OneDrive\Документы\KeystrokeDynamics\Unit1.pas=</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.001,=C:\Users\Alex\Documents\Embarcadero\Studio\Projects\Unit8.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.640,C:\Users\Alex\OneDrive\Документы\KeystrokeDynamics\keystrokeDynamics.dproj=C:\Users\Alex\Documents\Embarcadero\Studio\Projects\Project8.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.692,C:\Users\asyry\OneDrive\Документы\KeystrokeDynamics\Unit1.pas=C:\Users\asyry\OneDrive\Документы\KeystrokeDynamics\Keylogger.pas</Transaction>
+  </Transactions>
+</BorlandProject>
