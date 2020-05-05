@@ -7,7 +7,8 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Generics.Collections,Keylogger,
   Vcl.StdCtrls, Vcl.Grids, VclTee.TeeGDIPlus, VCLTee.TeEngine, VCLTee.TeeSurfa,
   Vcl.ExtCtrls, VCLTee.TeeProcs, VCLTee.Chart, VCLTee.TeePoin3,Feature_Extractor
-  ,Data_Time,DateUtils, Vcl.Imaging.pngimage, VCLTee.Series, VCLTee.ImaPoint;
+  ,Data_Time,DateUtils, Vcl.Imaging.pngimage, VCLTee.Series, VCLTee.ImaPoint,
+  Vcl.ComCtrls;
 
 type
   TFormKeystrokeDynamics = class(TForm)
@@ -24,6 +25,12 @@ type
     CheckBox1: TCheckBox;
     CheckBox2: TCheckBox;
     Series1: TPoint3DSeries;
+    TrackBarRotation: TTrackBar;
+    TrackBarElevation: TTrackBar;
+    TrackBarZoom: TTrackBar;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
     Series2: TPoint3DSeries;
     procedure FormCreate(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -35,6 +42,7 @@ type
     procedure Button3Click(Sender: TObject);
     procedure CheckBox1Click(Sender: TObject);
     procedure CheckBox2Click(Sender: TObject);
+    procedure TrackBarRotationChange(Sender: TObject);
   private
     { Private declarations }
   public
@@ -91,18 +99,19 @@ begin
   Series1.Clear;
   ext2 := TExtractor.Create();
   ext2.LoadCSVFile('feature_alex.csv',';');
+  ext2.Normalization;
   for Row :=1 to ext2.DataGrid.RowCount-2 do
   begin
-      Series1.AddXYZ(StrToFloat(ext2.DataGrid.Cells[0,Row]) ,StrToFloat(ext2.DataGrid.Cells[1,Row]),StrToFloat(ext2.DataGrid.Cells[2,Row]));
+      Series1.AddXYZ(StrToFloat(ext2.NormDataGrid.Cells[0,Row]) ,StrToFloat(ext2.NormDataGrid.Cells[1,Row]),StrToFloat(ext2.NormDataGrid.Cells[2,Row]));
   end;
 
   Series2.Clear;
   ext2 := TExtractor.Create();
   ext2.LoadCSVFile('feature_nata.csv',';');
+  ext2.Normalization;
   for Row :=1 to ext2.DataGrid.RowCount-2 do
   begin
-      Series2.SeriesColor := clRed;
-      Series2.AddXYZ(StrToFloat(ext2.DataGrid.Cells[0,Row]) ,StrToFloat(ext2.DataGrid.Cells[1,Row]),StrToFloat(ext2.DataGrid.Cells[2,Row]));
+      Series2.AddXYZ(StrToFloat(ext2.NormDataGrid.Cells[0,Row]) ,StrToFloat(ext2.NormDataGrid.Cells[1,Row]),StrToFloat(ext2.NormDataGrid.Cells[2,Row]));
 
   end;
 
@@ -137,6 +146,9 @@ end;
 
 procedure TFormKeystrokeDynamics.FormCreate(Sender: TObject);
 begin
+   TrackBarRotation.Position := Chart1.View3DOptions.Rotation;
+   TrackBarElevation.Position := Chart1.View3DOptions.Elevation;
+   TrackBarZoom.Position := Chart1.View3DOptions.Zoom;
    // AssignFile(f, 'outfile.csv');
    // Rewrite(f); // Создать файл, если его ещё нет или очистить файл, если он есть
    // WriteLn(f,'Event_Type;Key_Code;Shift;Alt;Control;Time');
@@ -150,6 +162,13 @@ begin
   //logger.Active := false;
  // FreeAndNil(logger);
   //CloseFile(f); // Закрыть файл
+end;
+
+procedure TFormKeystrokeDynamics.TrackBarRotationChange(Sender: TObject);
+begin
+   Chart1.View3DOptions.Rotation := TrackBarRotation.Position;
+   Chart1.View3DOptions.Elevation := TrackBarElevation.Position;
+   Chart1.View3DOptions.Zoom := TrackBarZoom.Position;
 end;
 
 end.

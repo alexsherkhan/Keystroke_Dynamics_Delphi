@@ -3,7 +3,7 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
   Top = 0
   Caption = 'Keystroke Dynamics'
   ClientHeight = 495
-  ClientWidth = 1042
+  ClientWidth = 883
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -15,6 +15,27 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
+  object Label1: TLabel
+    Left = 632
+    Top = 25
+    Width = 43
+    Height = 13
+    Caption = #1055#1086#1074#1086#1088#1086#1090
+  end
+  object Label2: TLabel
+    Left = 632
+    Top = 59
+    Width = 37
+    Height = 13
+    Caption = #1042#1099#1089#1086#1090#1072
+  end
+  object Label3: TLabel
+    Left = 632
+    Top = 88
+    Width = 45
+    Height = 13
+    Caption = #1052#1072#1089#1096#1090#1072#1073
+  end
   object GroupBox1: TGroupBox
     Left = 24
     Top = 24
@@ -91,8 +112,8 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
     OnClick = Button3Click
   end
   object Chart1: TChart
-    Left = 544
-    Top = 96
+    Left = 424
+    Top = 168
     Width = 417
     Height = 273
     BackWall.Brush.Gradient.Direction = gdBottomTop
@@ -119,6 +140,8 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
     BottomAxis.LabelsFormat.Font.Name = 'Verdana'
     BottomAxis.TicksInner.Color = 11119017
     BottomAxis.Title.Font.Name = 'Verdana'
+    Chart3DPercent = 59
+    ClipPoints = False
     DepthAxis.Axis.Color = 4210752
     DepthAxis.Grid.Color = 11119017
     DepthAxis.LabelsFormat.Font.Name = 'Verdana'
@@ -144,6 +167,10 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
     TopAxis.LabelsFormat.Font.Name = 'Verdana'
     TopAxis.TicksInner.Color = 11119017
     TopAxis.Title.Font.Name = 'Verdana'
+    View3DOptions.Elevation = 326
+    View3DOptions.Orthogonal = False
+    View3DOptions.Rotation = 360
+    View3DOptions.Zoom = 102
     Color = clWhite
     TabOrder = 3
     DefaultCanvas = 'TGDIPlusCanvas'
@@ -151,31 +178,75 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
     object Series1: TPoint3DSeries
       HoverElement = []
       LinePen.Visible = False
+      Pointer.Dark3D = False
       Pointer.InflateMargins = True
-      Pointer.Style = psRectangle
+      Pointer.Style = psCircle
       XValues.Name = 'X'
       XValues.Order = loNone
       YValues.Name = 'Y'
       YValues.Order = loNone
       ZValues.Name = 'Z'
       ZValues.Order = loNone
+      Data = {
+        0119000000000000000000544000000000000043400000000000002C40000000
+        0000004040000000000000544000000000000052400000000000805640000000
+        000000414000000000000046400000000000804B400000000000002240000000
+        000000384000000000000040400000000000804D400000000000804340000000
+        0000804240000000000000244000000000000022400000000000003A40000000
+        0000002A40000000000000384000000000000008400000000000804E40000000
+        0000C050400000000000002C4000000000000045400000000000804D40000000
+        0000C056400000000000003C4000000000004057400000000000003540000000
+        000000000000000000000048400000000000804A400000000000C05740000000
+        0000004440000000000000314000000000008057400000000000004B40000000
+        0000002240000000000000454000000000000020400000000000004C40000000
+        0000804E40000000000000204000000000000054400000000000004C40000000
+        000040584000000000000038400000000000004B400000000000805440000000
+        0000004D4000000000008057400000000000C053400000000000000000000000
+        0000805440000000000080514000000000008044400000000000004040000000
+        00000054400000000000004A4000000000000038400000000000405540000000
+        0000804740000000000000364000000000008049400000000000003D40000000
+        0000003540000000000000414000000000000018400000000000003140000000
+        0000804340000000000000F03F0000000000003E400000000000003F40}
+      Detail = {0000000000}
     end
     object Series2: TPoint3DSeries
       HoverElement = []
+      SeriesColor = clGreen
       LinePen.Visible = False
+      Pointer.Dark3D = False
       Pointer.InflateMargins = True
-      Pointer.Style = psDownTriangle
+      Pointer.Style = psStar
       XValues.Name = 'X'
       XValues.Order = loNone
       YValues.Name = 'Y'
       YValues.Order = loNone
       ZValues.Name = 'Z'
       ZValues.Order = loNone
+      Data = {
+        0119000000000000000000544000000000000043400000000000002C40000000
+        0000004040000000000000544000000000000052400000000000805640000000
+        000000414000000000000046400000000000804B400000000000002240000000
+        000000384000000000000040400000000000804D400000000000804340000000
+        0000804240000000000000244000000000000022400000000000003A40000000
+        0000002A40000000000000384000000000000008400000000000804E40000000
+        0000C050400000000000002C4000000000000045400000000000804D40000000
+        0000C056400000000000003C4000000000004057400000000000003540000000
+        000000000000000000000048400000000000804A400000000000C05740000000
+        0000004440000000000000314000000000008057400000000000004B40000000
+        0000002240000000000000454000000000000020400000000000004C40000000
+        0000804E40000000000000204000000000000054400000000000004C40000000
+        000040584000000000000038400000000000004B400000000000805440000000
+        0000004D4000000000008057400000000000C053400000000000000000000000
+        0000805440000000000080514000000000008044400000000000004040000000
+        00000054400000000000004A4000000000000038400000000000405540000000
+        0000804740000000000000364000000000008049400000000000003D40000000
+        0000003540000000000000414000000000000018400000000000003140000000
+        0000804340000000000000F03F0000000000003E400000000000003F40}
     end
   end
   object CheckBox1: TCheckBox
-    Left = 568
-    Top = 24
+    Left = 413
+    Top = 103
     Width = 97
     Height = 17
     Caption = 'Series1'
@@ -185,8 +256,8 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
     OnClick = CheckBox1Click
   end
   object CheckBox2: TCheckBox
-    Left = 568
-    Top = 58
+    Left = 413
+    Top = 126
     Width = 97
     Height = 17
     Caption = 'Series2'
@@ -194,5 +265,36 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
     State = cbChecked
     TabOrder = 5
     OnClick = CheckBox2Click
+  end
+  object TrackBarRotation: TTrackBar
+    Left = 691
+    Top = 20
+    Width = 150
+    Height = 37
+    Max = 360
+    Position = 345
+    TabOrder = 6
+    OnChange = TrackBarRotationChange
+  end
+  object TrackBarElevation: TTrackBar
+    Left = 691
+    Top = 53
+    Width = 150
+    Height = 37
+    Max = 360
+    Position = 345
+    TabOrder = 7
+    OnChange = TrackBarRotationChange
+  end
+  object TrackBarZoom: TTrackBar
+    Left = 691
+    Top = 83
+    Width = 150
+    Height = 37
+    Max = 500
+    Min = 1
+    Position = 100
+    TabOrder = 8
+    OnChange = TrackBarRotationChange
   end
 end
