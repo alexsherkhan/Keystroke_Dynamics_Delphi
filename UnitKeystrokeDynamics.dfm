@@ -211,7 +211,6 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
     end
     object Series2: TPoint3DSeries
       HoverElement = []
-      SeriesColor = clGreen
       LinePen.Visible = False
       Pointer.Dark3D = False
       Pointer.InflateMargins = True

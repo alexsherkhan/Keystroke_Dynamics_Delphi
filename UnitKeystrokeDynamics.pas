@@ -93,26 +93,30 @@ begin
 end;
 
 procedure TFormKeystrokeDynamics.Button3Click(Sender: TObject);
-var ext2: TExtractor;
+var ext2,ext3: TExtractor;
   Col, Row: integer;
+  test :Boolean;
 begin
   Series1.Clear;
   ext2 := TExtractor.Create();
-  ext2.LoadCSVFile('feature_alex.csv',';');
-  ext2.Normalization;
-  for Row :=1 to ext2.DataGrid.RowCount-2 do
+  ext2.LoadCSVFile('feature_alex.csv',';',true);
+  ext2.CalcStats(ext2.ExtractData);
+  ext2.NormalizationAndCenter;
+  test := ext2.TestNormalizationAndCenter;
+  for Row :=0 to Length(ext2.NormData[0])-1 do
   begin
-      Series1.AddXYZ(StrToFloat(ext2.NormDataGrid.Cells[0,Row]) ,StrToFloat(ext2.NormDataGrid.Cells[1,Row]),StrToFloat(ext2.NormDataGrid.Cells[2,Row]));
+      Series1.AddXYZ(ext2.NormData[0,Row] ,ext2.NormData[1,Row],ext2.NormData[2,Row]);
   end;
 
   Series2.Clear;
-  ext2 := TExtractor.Create();
-  ext2.LoadCSVFile('feature_nata.csv',';');
-  ext2.Normalization;
-  for Row :=1 to ext2.DataGrid.RowCount-2 do
+  ext3 := TExtractor.Create();
+  ext3.LoadCSVFile('feature_nata.csv',';',true);
+  ext3.CalcStats(ext3.ExtractData);
+  ext3.NormalizationAndCenter;
+  test := ext3.TestNormalizationAndCenter;
+  for Row :=0 to Length(ext3.NormData[0])-1 do
   begin
-      Series2.AddXYZ(StrToFloat(ext2.NormDataGrid.Cells[0,Row]) ,StrToFloat(ext2.NormDataGrid.Cells[1,Row]),StrToFloat(ext2.NormDataGrid.Cells[2,Row]));
-
+      Series2.AddXYZ(ext3.NormData[0,Row] ,ext3.NormData[1,Row],ext3.NormData[2,Row]);
   end;
 
 end;
