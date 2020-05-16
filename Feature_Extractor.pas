@@ -5,7 +5,10 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls,Clipbrd,Data_Time,Vcl.Grids,DateUtils,Math;
 type
-  TArrayDouble = Array Of Array Of Double;
+  /// <summary>
+  ///   Матрица вещественных чисел
+  /// </summary>
+  TMatrixDouble = Array Of Array Of Double;
 
 type
   TExtractor = class(TObject)
@@ -13,13 +16,26 @@ type
       FDataGrid : TStringGrid;
       FMinValue: Double;
       FMaxValue: Double;
-      FAvgValue: Array of Double;
+
       FDispersion: Array of Double;
       FColCount: Integer;
       FRowCount: Integer;
     public
-      ExtractData : TArrayDouble;
-      NormData : TArrayDouble;
+      FAvgValue: Array of Double;
+      /// <summary>
+      ///   Матрица извлеченных данных
+      /// </summary>
+      ExtractData : TMatrixDouble;
+      /// <summary>
+      ///   Матрица нормализованых и центрированных данных
+      /// </summary>
+      NormData : TMatrixDouble;
+      /// <summary>
+      ///   Средние значения столбцов (переменных) исходных данных
+      /// </summary>
+      AvgValue: Array of Double;
+      CovarMatrix : TMatrixDouble;
+      CorrelMatrix : TMatrixDouble;
       property DataGrid: TStringGrid read FDataGrid write FDataGrid;
       //property NormData: Array of Array of Double read FNormData write FNormData;
       property MinValue: Double read FMinValue write FMinValue;
@@ -28,10 +44,58 @@ type
       property ColCount: Integer read FColCount write FColCount;
       property RowCount: Integer read FRowCount write FRowCount;
 
+      /// <summary>
+      ///   Загрузка файлов CSV
+      /// </summary>
+      /// <param name="FileName">
+      ///   Имя файла
+      /// </param>
+      /// <param name="separator">
+      ///   Разделитель
+      /// </param>
+      /// <param name="Ext">
+      ///   Извлеченные характеристики(True) или нет(False)
+      /// </param>
       procedure LoadCSVFile(FileName: String; separator: char; Ext :Boolean = false);
+      /// <summary>
+      ///   Извлечение характеристик ввода текста с клавиатуры из файла
+      /// </summary>
+      /// <param name="FileName">
+      ///   Имя файла
+      /// </param>
       procedure Extract(FileName: String);
+      /// <summary>
+      ///   Нормализация и центрирование
+      /// </summary>
       procedure NormalizationAndCenter();
-      procedure CalcStats(AData: TArrayDouble);
+      /// <summary>
+      ///   Рассчет характеристик данных: средние значения столбцов, дисперсии
+      ///   столбцов
+      /// </summary>
+      /// <param name="AData">
+      ///   Матрица данных
+      /// </param>
+      procedure CalcStats(AData: TMatrixDouble);
+      /// <summary>
+      ///   Рассчет матриц ковариаций и корреляции
+      /// </summary>
+      /// <param name="AData">
+      ///   Матрица
+      /// </param>
+      /// <param name="AAvgValue">
+      ///   Средние значения столбцов
+      /// </param>
+      /// <param name="CovarMatrix">
+      ///   Ковариационная матрица
+      /// </param>
+      /// <param name="CorrelMatrix">
+      ///   Корреляционная матрица
+      /// </param>
+      procedure CalcCovarAndCorrel(AData: TMatrixDouble; AAvgValue: Array of Double;
+                  var ACovarMatrix: TMatrixDouble;var ACorrelMatrix: TMatrixDouble);
+      /// <summary>
+      ///   Тест нормализации и центрирования
+      /// </summary>
       function TestNormalizationAndCenter():Boolean;
 
       constructor Create();
@@ -234,10 +298,21 @@ begin
  CloseFile(f);
 end;
 
-procedure CalcDispersion(AData:TArrayDouble; AvgValue:Array of Double; var Dispersion:Array of Double );
+/// <summary>
+///   Рассчет дисперсии
+/// </summary>
+/// <param name="AData">
+///   Матрица данных
+/// </param>
+/// <param name="AvgValue">
+///   Массив средних значений
+/// </param>
+/// <param name="Dispersion">
+///   Массив дисперсий
+/// </param>
+procedure CalcDispersion(AData:TMatrixDouble; AvgValue:Array of Double; var Dispersion:Array of Double );
 var
-  Col, Row, Count: Integer;
-  Value: Double;
+  Col, Row: Integer;
   Sum2Difference: Array of Double;
 begin
   SetLength(Sum2Difference,Length(AData));
@@ -252,11 +327,10 @@ begin
       Dispersion[Col] := Sum2Difference[Col] / ((Length(AData[Col]))-1);
 end;
 
-procedure TExtractor.CalcStats(AData: TArrayDouble);
+procedure TExtractor.CalcStats(AData: TMatrixDouble);
 var
   Col, Row, Count: Integer;
   Value: Double;
-  Sum2Difference: Array of Double;
 begin
   Count := 0;
   FMinValue := MaxDouble;
@@ -289,7 +363,6 @@ end;
 
 procedure TExtractor.NormalizationAndCenter();
 var Col, Row: integer;
-  Value: Double;
 begin
 
   for Col := 0 to Length(ExtractData)-1 do
@@ -303,21 +376,42 @@ begin
   end;
 end;
 
-function TExtractor.TestNormalizationAndCenter():Boolean;
+/// <summary>
+///   Рассчет средних значений
+/// </summary>
+/// <param name="AData">
+///   Матрица данных
+/// </param>
+/// <param name="Av">
+///   Массив средних значению
+/// </param>
+procedure CalcAvg(AData: TMatrixDouble; var Av: Array of Double);
 var Col,Row: integer;
+begin
+  for Col := 0 to Length(AData)-1 do
+    for Row := 0 to Length(AData[Col])-1 do
+      Av[Col]:= Av[Col] + AData[Col, Row];
+
+  for Col := 0 to Length(AData)-1 do
+   begin
+      Av[Col]:= Av[Col] / Length(AData[Col]);
+   end;
+
+
+end;
+
+function TExtractor.TestNormalizationAndCenter():Boolean;
+var Col: integer;
   Av: Array of Double;
   Disp: Array of Double;
 begin
   SetLength(Av,Length(NormData));
   SetLength(Disp,Length(NormData));
 
-  for Col := 0 to Length(NormData)-1 do
-    for Row := 0 to Length(NormData[Col])-1 do
-      Av[Col]:= Av[Col] + NormData[Col, Row];
+   CalcAvg(NormData,Av);
 
    for Col := 0 to Length(NormData)-1 do
    begin
-      Av[Col]:= Av[Col] / Length(NormData[Col]);
       Av[Col]:= abs(RoundTo(Av[Col],-3));
    end;
 
@@ -332,6 +426,64 @@ begin
 
 end;
 
+procedure TExtractor.CalcCovarAndCorrel(AData: TMatrixDouble; AAvgValue: Array of Double;
+    var ACovarMatrix: TMatrixDouble; var ACorrelMatrix: TMatrixDouble);
+var
+  Col, Row: Integer;
+  Av: Array of Double;
+  Disp: Array of Double;
 
+  function SumRoW():Double;
+  var i: integer;
+      Sum: Double;
+      mult: Double;
+  begin
+    Sum := 0;
+    i:=0;
+    for i := 0 to Length(AData[i])-1 do
+    begin
+      mult :=  (AData[Row,i] - Av[Row])*(AData[Col,i] - Av[Col]);
+      Sum := Sum + mult;
+    end;
+    Result := Sum;
+  end;
+begin
+
+  SetLength(ACovarMatrix,Length(AData));
+  SetLength(ACorrelMatrix,Length(AData));
+
+  SetLength(Av,Length(AData));
+  SetLength(Disp,Length(AData));
+
+  CalcAvg(AData,Av);
+
+  for Col := 0 to Length(NormData)-1 do
+   begin
+      Av[Col]:= abs(RoundTo(Av[Col],-3));
+   end;
+
+  CalcDispersion(AData,Av,Disp);
+   for Col := 0 to Length(NormData)-1 do
+   begin
+      Disp[Col]:= abs(RoundTo(Disp[Col],-3));
+   end;
+
+  for Col := 0 to Length(AData)-1 do
+    for Row := 0 to Length(AData)-1 do
+    begin
+       SetLength(ACovarMatrix[Col],Row+1);
+       SetLength(ACorrelMatrix[Col],Row+1);
+
+       ACovarMatrix[Col,Row] := SumRow()/ (Length(AData[Col])-1);
+
+       if (Col = Row) then
+          CovarMatrix[Col,Row] := abs(RoundTo(ACovarMatrix[Col,Row],-1));
+
+       ACorrelMatrix[Col,Row] := CovarMatrix[Col,Row]/(Disp[Col]*Disp[Row]);
+    end;
+       CovarMatrix := ACovarMatrix;
+       CorrelMatrix := ACorrelMatrix;
+
+end;
 
 end.

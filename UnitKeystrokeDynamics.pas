@@ -103,6 +103,7 @@ begin
   ext2.CalcStats(ext2.ExtractData);
   ext2.NormalizationAndCenter;
   test := ext2.TestNormalizationAndCenter;
+  ext2.CalcCovarAndCorrel(ext2.NormData,ext2.FAvgValue,ext2.CovarMatrix,ext2.CorrelMatrix);
   for Row :=0 to Length(ext2.NormData[0])-1 do
   begin
       Series1.AddXYZ(ext2.NormData[0,Row] ,ext2.NormData[1,Row],ext2.NormData[2,Row]);
