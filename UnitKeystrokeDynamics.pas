@@ -8,7 +8,7 @@ uses
   Vcl.StdCtrls, Vcl.Grids, VclTee.TeeGDIPlus, VCLTee.TeEngine, VCLTee.TeeSurfa,
   Vcl.ExtCtrls, VCLTee.TeeProcs, VCLTee.Chart, VCLTee.TeePoin3,Feature_Extractor
   ,Data_Time,DateUtils, Vcl.Imaging.pngimage, VCLTee.Series, VCLTee.ImaPoint,
-  Vcl.ComCtrls;
+  Vcl.ComCtrls, Lib_TRED2_TQLI2;
 
 type
   TFormKeystrokeDynamics = class(TForm)
@@ -94,16 +94,21 @@ end;
 
 procedure TFormKeystrokeDynamics.Button3Click(Sender: TObject);
 var ext2,ext3: TExtractor;
-  Col, Row: integer;
+  Col, Row,err: integer;
   test :Boolean;
+  d,e : TVector;
+  a : TMatrixDouble;
 begin
   Series1.Clear;
   ext2 := TExtractor.Create();
-  ext2.LoadCSVFile('feature_alex.csv',';',true);
+  ext2.LoadCSVFile('feature_test.csv',';',true);
   ext2.CalcStats(ext2.ExtractData);
   ext2.NormalizationAndCenter;
   test := ext2.TestNormalizationAndCenter;
   ext2.CalcCovarAndCorrel(ext2.NormData,ext2.FAvgValue,ext2.CovarMatrix,ext2.CorrelMatrix);
+  a :=  ext2.CovarMatrix;
+  tred2(2,1,a,d,e);
+  tqli2(2,30,a,d,e,err);
   for Row :=0 to Length(ext2.NormData[0])-1 do
   begin
       Series1.AddXYZ(ext2.NormData[0,Row] ,ext2.NormData[1,Row],ext2.NormData[2,Row]);

@@ -3,12 +3,8 @@ unit Feature_Extractor;
 interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls,Clipbrd,Data_Time,Vcl.Grids,DateUtils,Math;
-type
-  /// <summary>
-  ///   Матрица вещественных чисел
-  /// </summary>
-  TMatrixDouble = Array Of Array Of Double;
+  Dialogs, StdCtrls,Clipbrd,Data_Time,Vcl.Grids,DateUtils,Math,
+  Lib_TRED2_TQLI2;
 
 type
   TExtractor = class(TObject)
@@ -101,6 +97,7 @@ type
       constructor Create();
       destructor Destroy; override;
   end;
+ { procedure Trans(var AData: TMatrixDouble);}
 implementation
 
 constructor TExtractor.Create();
@@ -399,6 +396,21 @@ begin
 
 
 end;
+ {
+procedure Trans(var AData: TMatrixDouble);
+var Col,Row: integer;
+  tempData: TMatrixDouble;
+begin
+  SetLength(tempData,Length(AData));
+  for Col := 0 to Length(AData)-1 do
+    for Row := 0 to Length(AData[Col])-1 do
+    begin
+      SetLength(tempData[Col],Length(AData[Col]));
+      tempData[Row,Col]:= AData[Col, Row];
+    end;
+
+  AData := tempData;
+end; }
 
 function TExtractor.TestNormalizationAndCenter():Boolean;
 var Col: integer;
