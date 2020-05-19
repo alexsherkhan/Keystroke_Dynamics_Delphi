@@ -19,6 +19,18 @@ type
 ///   e[0..n-1]. <br />Матрица преобразования формируется в массиве
 ///   a[0..n-1,0..n-1].
 /// </summary>
+/// <param name="n">
+///   Размерность матрицы
+/// </param>
+/// <param name="a">
+///   Симметричная матрица
+/// </param>
+/// <param name="d">
+///   Диагональные элементы матрицы
+/// </param>
+/// <param name="e">
+///   Поддиагональные элементы матрицы <br />
+/// </param>
 procedure tred2(n : integer; tol : treal; var a : tmatrixDouble; var d,e : tvector);
 
 /// <summary>
@@ -29,8 +41,24 @@ procedure tred2(n : integer; tol : treal; var a : tmatrixDouble; var d,e : tvect
 ///   собственные векторы матрицы приведенной к трехдиагональному <br />виду с
 ///   помощью процедуры tred2, то A содержит соответсвующую матрицу <br />
 ///   преобразования, в противном случае должна быть задана как единичная
-///   матрица
+///   матрица. <br />На выходе z-матрица собственных векторов, d - собственные
+///   значения
 /// </summary>
+/// <param name="n">
+///   Размерность матрицы
+/// </param>
+/// <param name="maxiter">
+///   Максимальное количество итераций
+/// </param>
+/// <param name="z">
+///   Матрица в трехдиагональной форме
+/// </param>
+/// <param name="d">
+///   Диагональные элементы матрицы <br />
+/// </param>
+/// <param name="e">
+///   Внедиагональные элементы матрицы
+/// </param>
 procedure tqli2(n,maxiter : integer; var z : tmatrixDouble; var d,e : tvector; var err : integer);
 
 implementation
@@ -45,19 +73,19 @@ begin
   begin
    l:=i-1;
    f:=a[i,l];
-   g:=0.;
+   g:=0.0;
    if l>=0 then for k:=0 to l-1 do g:=g+sqr(a[i,k]);
    h:=g+sqr(f);
      {преобразование Хаусхолдера не выполняется,если параметр g слишком мал,
       чтобы гарантировать ортогональность}
      if g>tol then
       begin
-       if f>=0. then g:=-sqrt(h) else g:=sqrt(h);
+       if f>=0.0 then g:=-sqrt(h) else g:=sqrt(h);
        e[i]:=g;
-       h:=h-f*g; a[i,l]:=f-g; f:=0.;
+       h:=h-f*g; a[i,l]:=f-g; f:=0.0;
        for j:=0 to l do
         begin
-         a[j,i]:=a[i,j]/h; g:=0.;
+         a[j,i]:=a[i,j]/h; g:=0.0;
          {формирование вектора A*u}
          for k:=0 to j do g:=g+a[j,k]*a[i,k];
          for k:=j+1 to l do g:=g+a[k,j]*a[i,k];
@@ -75,11 +103,11 @@ begin
       end
       else
        begin
-        e[i]:=f; h:=0.;
+        e[i]:=f; h:=0.0;
        end;
     d[i]:=h;
   end;
- d[0]:=0.; e[0]:=0.;
+ d[0]:=0.0; e[0]:=0.0;
  {накопление матриц преобразования}
  for i:=0 to n do
   begin
@@ -91,10 +119,10 @@ begin
        for k:=0 to l do g:=g + a[i,k]*a[k,j];
        for k:=0 to l do a[k,j]:=a[k,j] - g*a[k,i];
       end;
-    d[i]:=a[i,i]; a[i,i]:=1.;
+    d[i]:=a[i,i]; a[i,i]:=1.0;
     for j:=0 to l do
      begin
-      a[i,j]:=0.; a[j,i]:=0.;
+      a[i,j]:=0.0; a[j,i]:=0.0;
      end;
   end;
 end;

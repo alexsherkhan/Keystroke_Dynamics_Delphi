@@ -103,14 +103,12 @@ implementation
 constructor TExtractor.Create();
 begin
    DataGrid := TStringGrid.Create(nil);
-   //NormDataGrid := TStringGrid.Create(nil);
 end;
 
 destructor TExtractor.Destroy;
 begin
   inherited;
   FreeAndNil(FDataGrid);
-  //FreeAndNil(FNormDataGrid);
 end;
 
 procedure TExtractor.LoadCSVFile(FileName: String; separator: char; Ext :Boolean = false);
