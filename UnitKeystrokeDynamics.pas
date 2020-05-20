@@ -5,9 +5,9 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Generics.Collections,Keylogger,
-  Vcl.StdCtrls, Vcl.Grids, VclTee.TeeGDIPlus, VCLTee.TeEngine, VCLTee.TeeSurfa,
-  Vcl.ExtCtrls, VCLTee.TeeProcs, VCLTee.Chart, VCLTee.TeePoin3,Feature_Extractor
-  ,Data_Time,DateUtils, Vcl.Imaging.pngimage, VCLTee.Series, VCLTee.ImaPoint,
+  Vcl.StdCtrls, Vcl.Grids, VclTee.TeeGDIPlus, VCLTee.TeEngine,
+  Vcl.ExtCtrls, VCLTee.TeeProcs, VCLTee.Chart,Feature_Extractor
+  ,Data_Time,DateUtils, Vcl.Imaging.pngimage, VCLTee.Series,
   Vcl.ComCtrls, Lib_TRED2_TQLI2,PCA;
 
 type
@@ -21,7 +21,6 @@ type
     LabelStatus: TLabel;
     Memo1: TMemo;
     Button3: TButton;
-    Chart1: TChart;
     CheckBox1: TCheckBox;
     CheckBox2: TCheckBox;
     TrackBarRotation: TTrackBar;
@@ -30,6 +29,7 @@ type
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
+    Chart1: TChart;
     Data1: TPointSeries;
     Data2: TPointSeries;
     procedure FormCreate(Sender: TObject);
@@ -161,9 +161,9 @@ end;
 
 procedure TFormKeystrokeDynamics.FormCreate(Sender: TObject);
 begin
-   TrackBarRotation.Position := Chart1.View3DOptions.Rotation;
-   TrackBarElevation.Position := Chart1.View3DOptions.Elevation;
-   TrackBarZoom.Position := Chart1.View3DOptions.Zoom;
+  // TrackBarRotation.Position := Chart1.View3DOptions.Rotation;
+  // TrackBarElevation.Position := Chart1.View3DOptions.Elevation;
+  // TrackBarZoom.Position := Chart1.View3DOptions.Zoom;
    // AssignFile(f, 'outfile.csv');
    // Rewrite(f); // Создать файл, если его ещё нет или очистить файл, если он есть
    // WriteLn(f,'Event_Type;Key_Code;Shift;Alt;Control;Time');
@@ -181,9 +181,9 @@ end;
 
 procedure TFormKeystrokeDynamics.TrackBarRotationChange(Sender: TObject);
 begin
-   Chart1.View3DOptions.Rotation := TrackBarRotation.Position;
-   Chart1.View3DOptions.Elevation := TrackBarElevation.Position;
-   Chart1.View3DOptions.Zoom := TrackBarZoom.Position;
+  // Chart1.View3DOptions.Rotation := TrackBarRotation.Position;
+  // Chart1.View3DOptions.Elevation := TrackBarElevation.Position;
+  // Chart1.View3DOptions.Zoom := TrackBarZoom.Position;
 end;
 
 end.

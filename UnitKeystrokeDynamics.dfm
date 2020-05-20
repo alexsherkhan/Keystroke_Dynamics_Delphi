@@ -112,92 +112,6 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
     TabOrder = 2
     OnClick = Button3Click
   end
-  object Chart1: TChart
-    Left = 424
-    Top = 168
-    Width = 417
-    Height = 273
-    BackWall.Brush.Gradient.Direction = gdBottomTop
-    BackWall.Brush.Gradient.EndColor = clWhite
-    BackWall.Brush.Gradient.StartColor = 15395562
-    BackWall.Brush.Gradient.Visible = True
-    BackWall.Transparent = False
-    Foot.Font.Color = clBlue
-    Foot.Font.Name = 'Verdana'
-    Gradient.Direction = gdBottomTop
-    Gradient.EndColor = clWhite
-    Gradient.MidColor = 15395562
-    Gradient.StartColor = 15395562
-    Gradient.Visible = True
-    LeftWall.Color = 14745599
-    Legend.Font.Name = 'Verdana'
-    Legend.Shadow.Transparency = 0
-    RightWall.Color = 14745599
-    Title.Font.Name = 'Verdana'
-    Title.Text.Strings = (
-      #1054#1073#1083#1072#1082#1086' '#1076#1072#1085#1085#1099#1093)
-    BottomAxis.Axis.Color = 4210752
-    BottomAxis.Grid.Color = 11119017
-    BottomAxis.LabelsFormat.Font.Name = 'Verdana'
-    BottomAxis.TicksInner.Color = 11119017
-    BottomAxis.Title.Font.Name = 'Verdana'
-    Chart3DPercent = 59
-    ClipPoints = False
-    DepthAxis.Axis.Color = 4210752
-    DepthAxis.Grid.Color = 11119017
-    DepthAxis.LabelsFormat.Font.Name = 'Verdana'
-    DepthAxis.TicksInner.Color = 11119017
-    DepthAxis.Title.Font.Name = 'Verdana'
-    DepthTopAxis.Axis.Color = 4210752
-    DepthTopAxis.Grid.Color = 11119017
-    DepthTopAxis.LabelsFormat.Font.Name = 'Verdana'
-    DepthTopAxis.TicksInner.Color = 11119017
-    DepthTopAxis.Title.Font.Name = 'Verdana'
-    LeftAxis.Axis.Color = 4210752
-    LeftAxis.Grid.Color = 11119017
-    LeftAxis.LabelsFormat.Font.Name = 'Verdana'
-    LeftAxis.TicksInner.Color = 11119017
-    LeftAxis.Title.Font.Name = 'Verdana'
-    RightAxis.Axis.Color = 4210752
-    RightAxis.Grid.Color = 11119017
-    RightAxis.LabelsFormat.Font.Name = 'Verdana'
-    RightAxis.TicksInner.Color = 11119017
-    RightAxis.Title.Font.Name = 'Verdana'
-    TopAxis.Axis.Color = 4210752
-    TopAxis.Grid.Color = 11119017
-    TopAxis.LabelsFormat.Font.Name = 'Verdana'
-    TopAxis.TicksInner.Color = 11119017
-    TopAxis.Title.Font.Name = 'Verdana'
-    View3D = False
-    View3DOptions.Elevation = 326
-    View3DOptions.Orthogonal = False
-    View3DOptions.Rotation = 360
-    View3DOptions.Zoom = 102
-    Color = clWhite
-    TabOrder = 3
-    DefaultCanvas = 'TGDIPlusCanvas'
-    ColorPaletteIndex = 0
-    object Data1: TPointSeries
-      HoverElement = [heCurrent]
-      ClickableLine = False
-      Pointer.InflateMargins = True
-      Pointer.Style = psRectangle
-      XValues.Name = 'X'
-      XValues.Order = loAscending
-      YValues.Name = 'Y'
-      YValues.Order = loNone
-    end
-    object Data2: TPointSeries
-      HoverElement = [heCurrent]
-      ClickableLine = False
-      Pointer.InflateMargins = True
-      Pointer.Style = psRectangle
-      XValues.Name = 'X'
-      XValues.Order = loAscending
-      YValues.Name = 'Y'
-      YValues.Order = loNone
-    end
-  end
   object CheckBox1: TCheckBox
     Left = 413
     Top = 103
@@ -206,7 +120,7 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
     Caption = 'Data1'
     Checked = True
     State = cbChecked
-    TabOrder = 4
+    TabOrder = 3
     OnClick = CheckBox1Click
   end
   object CheckBox2: TCheckBox
@@ -217,7 +131,7 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
     Caption = 'Data2'
     Checked = True
     State = cbChecked
-    TabOrder = 5
+    TabOrder = 4
     OnClick = CheckBox2Click
   end
   object TrackBarRotation: TTrackBar
@@ -227,7 +141,7 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
     Height = 37
     Max = 360
     Position = 345
-    TabOrder = 6
+    TabOrder = 5
     OnChange = TrackBarRotationChange
   end
   object TrackBarElevation: TTrackBar
@@ -248,7 +162,37 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
     Max = 500
     Min = 1
     Position = 100
-    TabOrder = 8
+    TabOrder = 6
     OnChange = TrackBarRotationChange
+  end
+  object Chart1: TChart
+    Left = 413
+    Top = 167
+    Width = 400
+    Height = 250
+    Title.Text.Strings = (
+      #1054#1073#1083#1072#1082#1086' '#1076#1072#1085#1085#1099#1093)
+    View3D = False
+    TabOrder = 8
+    DefaultCanvas = 'TGDIPlusCanvas'
+    ColorPaletteIndex = 13
+    object Data1: TPointSeries
+      ClickableLine = False
+      Pointer.InflateMargins = True
+      Pointer.Style = psRectangle
+      XValues.Name = 'X'
+      XValues.Order = loAscending
+      YValues.Name = 'Y'
+      YValues.Order = loNone
+    end
+    object Data2: TPointSeries
+      ClickableLine = False
+      Pointer.InflateMargins = True
+      Pointer.Style = psRectangle
+      XValues.Name = 'X'
+      XValues.Order = loAscending
+      YValues.Name = 'Y'
+      YValues.Order = loNone
+    end
   end
 end

