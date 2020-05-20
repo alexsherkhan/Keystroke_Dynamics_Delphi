@@ -62,7 +62,7 @@ var
   fileArray : array [0..2] of String =
   (
     '.\Data\keylog_kirill_feature.csv',
-    '.\Data\keylog_alina_feature.csv',
+    '.\Data\keylog_alex_feature.csv',
     '.\Data\keylog_witaly_feature.csv'
   );
 implementation
