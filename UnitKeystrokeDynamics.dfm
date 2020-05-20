@@ -2,8 +2,8 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
   Left = 0
   Top = 0
   Caption = 'Keystroke Dynamics'
-  ClientHeight = 495
-  ClientWidth = 883
+  ClientHeight = 592
+  ClientWidth = 1001
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -166,10 +166,10 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
     OnChange = TrackBarRotationChange
   end
   object Chart1: TChart
-    Left = 413
+    Left = 424
     Top = 167
-    Width = 400
-    Height = 250
+    Width = 553
+    Height = 386
     Title.Text.Strings = (
       #1054#1073#1083#1072#1082#1086' '#1076#1072#1085#1085#1099#1093)
     View3D = False
@@ -194,5 +194,29 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
       YValues.Name = 'Y'
       YValues.Order = loNone
     end
+    object Data3: TPointSeries
+      ClickableLine = False
+      Pointer.InflateMargins = True
+      Pointer.Style = psRectangle
+      XValues.Name = 'X'
+      XValues.Order = loAscending
+      YValues.Name = 'Y'
+      YValues.Order = loNone
+    end
+  end
+  object CheckBox3: TCheckBox
+    Left = 413
+    Top = 149
+    Width = 97
+    Height = 17
+    Caption = 'Data3'
+    Checked = True
+    State = cbChecked
+    TabOrder = 9
+    OnClick = CheckBox3Click
+  end
+  object OpenDialog1: TOpenDialog
+    Left = 32
+    Top = 432
   end
 end

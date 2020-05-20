@@ -32,6 +32,9 @@ type
     Chart1: TChart;
     Data1: TPointSeries;
     Data2: TPointSeries;
+    OpenDialog1: TOpenDialog;
+    Data3: TPointSeries;
+    CheckBox3: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -44,6 +47,7 @@ type
     procedure CheckBox2Click(Sender: TObject);
     procedure TrackBarRotationChange(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure CheckBox3Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -54,6 +58,13 @@ var
   FormKeystrokeDynamics: TFormKeystrokeDynamics;
   logger : TKeylogger;
   f: TextFile;
+
+  fileArray : array [0..2] of String =
+  (
+    '.\Data\keylog_kirill_feature.csv',
+    '.\Data\keylog_alina_feature.csv',
+    '.\Data\keylog_witaly_feature.csv'
+  );
 implementation
 
 {$R *.dfm}
@@ -62,29 +73,15 @@ implementation
 procedure TFormKeystrokeDynamics.Button1Click(Sender: TObject);
 var
   ext: TExtractor ;
-  //i:Double;
-//  i1,i2: TDateTime;
-  //diff : Double;
 begin
- // i := ExtractSec('yy:mm:dd:hh:mm:22.103');
- // i := ExtractSec('yy:mm:dd:hh:mm:22.103');
-// i1:= ExtractDateTime('20:02:24:21:34:52.149');
- //i2:= ExtractDateTime('20:02:24:21:34:52.589');
-// diff := MilliSecondsBetween(i2,i1);
- //diff:= 1;
   ext := TExtractor.Create();
-  ext.LoadCSVFile( EditNameUser.Text +'.csv',';');
-  ext.Extract(EditNameUser.Text);
-  ShowMessage('Успешно');
-  //StringGrid1:= ext.DataGrid;
- // write('sd');
-  // j := DateTimeToFileDate(Now);
-   // AssignFile(f, 'outfile.csv');
- //   Rewrite(f); // Создать файл, если его ещё нет или очистить файл, если он есть
-  // WriteLn(f,';;;;;'+FormatDateTime('yyyy:mm:dd:hh:mm:ss.zzz', Now));
-  //WriteLn(f, 'lr;rl;lR;Lr;rL;Rl;lL;rR;ll;rr;l;r;L','R;Space;Enter;Backspace;cpm'); // Записать строку в файл
-
-  //CloseFile(f); // Закрыть файл
+  if opendialog1.Execute then
+  begin
+    ext.LoadCSVFile( opendialog1.FileName ,';');
+    ext.Extract(opendialog1.FileName);
+    ShowMessage('Успешно');
+  end;
+ FreeAndNil(ext);
 end;
 
 procedure TFormKeystrokeDynamics.Button2Click(Sender: TObject);
@@ -94,36 +91,27 @@ begin
 end;
 
 procedure TFormKeystrokeDynamics.Button3Click(Sender: TObject);
-var ext2,ext3: TExtractor;
-  Row: integer;
-  PCObj,PCObj2: TPCA;
+var ext: TExtractor;
+  Row,i: integer;
+  PCObj: TPCA;
 begin
-  Data1.Clear;
-  ext2 := TExtractor.Create();
-  ext2.LoadCSVFile('feature_alex.csv',';',true);
-  ext2.CalcStats(ext2.ExtractData);
-  PCObj := TPCA.Create(ext2);
-  PCObj.CalcPC();
-  for Row :=0 to Length(ext2.NormData[0])-1 do
+
+  for i :=0 to Length(fileArray)-1 do
   begin
-      Data1.AddXY(PCObj.PC[0,Row] ,PCObj.PC[1,Row]);
+    Chart1.Series[i].Clear;
+    ext := TExtractor.Create();
+    ext.LoadCSVFile(fileArray[i],';',true);
+    ext.CalcStats(ext.ExtractData);
+    PCObj := TPCA.Create(ext);
+    PCObj.CalcPC();
+    for Row :=0 to Length(ext.NormData[0])-1 do
+    begin
+       Chart1.Series[i].AddXY(PCObj.PC[0,Row] ,PCObj.PC[1,Row]);
+    end;
+    FreeAndNil(ext);
+    FreeAndNil(PCObj);
   end;
 
-  Data2.Clear;
-  ext3 := TExtractor.Create();
-  ext3.LoadCSVFile('feature_nata.csv',';',true);
-  ext3.CalcStats(ext3.ExtractData);
-  PCObj2 := TPCA.Create(ext3);
-  PCObj2.CalcPC();
-  for Row :=0 to Length(ext3.NormData[0])-1 do
-  begin
-      Data2.AddXY(PCObj2.PC[0,Row] ,PCObj2.PC[1,Row]);
-  end;
-
-  FreeAndNil(ext2);
-  FreeAndNil(ext3);
-  FreeAndNil(PCObj);
-  FreeAndNil(PCObj2);
 end;
 
 procedure TFormKeystrokeDynamics.ButtonStartClick(Sender: TObject);
@@ -141,6 +129,11 @@ end;
 procedure TFormKeystrokeDynamics.CheckBox2Click(Sender: TObject);
 begin
    Data2.Visible := CheckBox2.Checked;
+end;
+
+procedure TFormKeystrokeDynamics.CheckBox3Click(Sender: TObject);
+begin
+   Data3.Visible := CheckBox3.Checked;
 end;
 
 procedure TFormKeystrokeDynamics.EditNameUserClick(Sender: TObject);

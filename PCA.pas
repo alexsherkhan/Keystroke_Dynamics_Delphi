@@ -153,7 +153,9 @@ var
 begin
   Eigenvectors := CovarMatrix;
   SetLength(Eigenvalues,Length(CovarMatrix));
+  SetLength(e,Length(CovarMatrix));
 
+  err := 0;
   tred2(Length(CovarMatrix),1,Eigenvectors,Eigenvalues,e);
   tqli2(Length(CovarMatrix),30,Eigenvectors,Eigenvalues,e,err);
 

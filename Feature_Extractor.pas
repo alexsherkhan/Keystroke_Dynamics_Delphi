@@ -178,6 +178,7 @@ begin
   end;
  CloseFile(f);
 
+ if Ext then
  for i := 0 to DataGrid.ColCount-1 do
  begin
    if ExtractData[i] = nil then DataGrid.ColCount := DataGrid.ColCount-1;
@@ -189,20 +190,20 @@ end;
 
 procedure TExtractor.Extract(FileName: String);
 var f: TextFile;
-//    s1, s2: string;
     Row1, Row2,Count: integer;
     Time1,Time2: TDateTime;
     latency,HoldTime,CPM : double;
     CodeChar : integer;
     Characters: integer;
+
 begin
     FMinValue := MaxDouble;
     FMaxValue := MinDouble;
     Count := 0;
-    SetLength(ExtractData,DataGrid.ColCount);
+    SetLength(ExtractData,3);
 
-    AssignFile(f, ExtractFilePath(Application.ExeName) + 'feature_'+ FileName + '.csv');
-    if FileExists(ExtractFilePath(Application.ExeName) + 'feature_'+ FileName + '.csv') = False then
+   AssignFile(f,Copy(FileName,0,Length(FileName)-4) +'_feature' + '.csv');
+    if FileExists(Copy(FileName,0,Length(FileName)-4) +'_feature' + '.csv') = False then
     begin
       Rewrite(f);
       WriteLn(f,'Latency;HoldTime;CPM');
@@ -211,8 +212,6 @@ begin
       Append(f);
 
   Characters :=0;
-  //Row1 :=1;
-  //while Row1 < DataGrid.RowCount-1  do
   for Row1 :=1 to DataGrid.RowCount-1 do
   begin
     if DataGrid.Cells[0,Row1] = '256' then
@@ -238,7 +237,8 @@ begin
           if (DataGrid.Cells[0,Row2] = '257') and (CodeChar = StrToInt(DataGrid.Cells[2,Row2]))then
             begin
               Characters := Characters + 1;
-              if MilliSecondsBetween(ExtractDateTime(DataGrid.Cells[6,1]),(ExtractDateTime(DataGrid.Cells[6,Row2]))) >60000 then
+
+              if MilliSecondsBetween(ExtractDateTime(DataGrid.Cells[6,1]),(ExtractDateTime(DataGrid.Cells[6,Row2]))) >600 then
               begin
                 CPM := Characters/(MilliSecondsBetween(ExtractDateTime(DataGrid.Cells[6,1]),(ExtractDateTime(DataGrid.Cells[6,Row2])))/60000);
                   if CPM < FMinValue then
@@ -253,9 +253,13 @@ begin
                     FMinValue := HoldTime;
                   if HoldTime > FMaxValue then
                     FMaxValue := HoldTime;
-              if (latency < 1500) and (HoldTime < 1500) then
+              if (latency < 1500) and (HoldTime < 1500) and (CPM <>0) then
               begin
                 WriteLn(f,latency.ToString() +';'+HoldTime.ToString()+';'+ CPM.ToString()+';');
+                SetLength(ExtractData[0],Count + 1);
+                SetLength(ExtractData[1],Count + 1);
+                SetLength(ExtractData[2],Count + 1);
+
                 ExtractData[0,Count] := latency;
                 ExtractData[1,Count] := HoldTime;
                 ExtractData[2,Count] := CPM;
