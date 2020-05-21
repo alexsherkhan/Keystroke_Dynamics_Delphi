@@ -37,6 +37,20 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
     Height = 13
     Caption = #1052#1072#1089#1096#1090#1072#1073
   end
+  object Label4: TLabel
+    Left = 511
+    Top = 57
+    Width = 19
+    Height = 13
+    Caption = 'PC1'
+  end
+  object Label5: TLabel
+    Left = 511
+    Top = 103
+    Width = 19
+    Height = 13
+    Caption = 'PC2'
+  end
   object GroupBox1: TGroupBox
     Left = 24
     Top = 24
@@ -108,7 +122,7 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
     Top = 72
     Width = 75
     Height = 25
-    Caption = #1055#1086#1082#1072#1079#1072#1090#1100
+    Caption = #1056#1072#1089#1089#1095#1077#1090' PCA'
     TabOrder = 2
     OnClick = Button3Click
   end
@@ -167,16 +181,28 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
   end
   object Chart1: TChart
     Left = 424
-    Top = 167
+    Top = 172
     Width = 553
     Height = 386
     Title.Text.Strings = (
       #1054#1073#1083#1072#1082#1086' '#1076#1072#1085#1085#1099#1093)
     View3D = False
+    Zoom.Animated = True
     TabOrder = 8
     DefaultCanvas = 'TGDIPlusCanvas'
     ColorPaletteIndex = 13
+    object DataAll: TPointSeries
+      HoverElement = [heCurrent]
+      ClickableLine = False
+      Pointer.InflateMargins = True
+      Pointer.Style = psRectangle
+      XValues.Name = 'X'
+      XValues.Order = loAscending
+      YValues.Name = 'Y'
+      YValues.Order = loNone
+    end
     object Data1: TPointSeries
+      HoverElement = [heCurrent]
       ClickableLine = False
       Pointer.InflateMargins = True
       Pointer.Style = psRectangle
@@ -186,6 +212,7 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
       YValues.Order = loNone
     end
     object Data2: TPointSeries
+      HoverElement = [heCurrent]
       ClickableLine = False
       Pointer.InflateMargins = True
       Pointer.Style = psRectangle
@@ -195,6 +222,7 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
       YValues.Order = loNone
     end
     object Data3: TPointSeries
+      HoverElement = [heCurrent]
       ClickableLine = False
       Pointer.InflateMargins = True
       Pointer.Style = psRectangle
@@ -214,6 +242,42 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
     State = cbChecked
     TabOrder = 9
     OnClick = CheckBox3Click
+  end
+  object ComboBox1: TComboBox
+    Left = 511
+    Top = 76
+    Width = 115
+    Height = 21
+    TabOrder = 10
+    OnSelect = ComboBox1Select
+  end
+  object ComboBox2: TComboBox
+    Left = 511
+    Top = 122
+    Width = 115
+    Height = 21
+    TabOrder = 11
+    OnSelect = ComboBox2Select
+  end
+  object ButtonShow: TButton
+    Left = 511
+    Top = 20
+    Width = 75
+    Height = 25
+    Caption = #1055#1086#1082#1072#1079#1072#1090#1100
+    TabOrder = 12
+    OnClick = ButtonShowClick
+  end
+  object CheckBox4: TCheckBox
+    Left = 516
+    Top = 149
+    Width = 97
+    Height = 17
+    Caption = 'DataAll'
+    Checked = True
+    State = cbChecked
+    TabOrder = 13
+    OnClick = CheckBox4Click
   end
   object OpenDialog1: TOpenDialog
     Left = 32

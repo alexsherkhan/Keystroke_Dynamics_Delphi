@@ -35,6 +35,13 @@ type
     OpenDialog1: TOpenDialog;
     Data3: TPointSeries;
     CheckBox3: TCheckBox;
+    ComboBox1: TComboBox;
+    ComboBox2: TComboBox;
+    ButtonShow: TButton;
+    Label4: TLabel;
+    Label5: TLabel;
+    DataAll: TPointSeries;
+    CheckBox4: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -48,6 +55,10 @@ type
     procedure TrackBarRotationChange(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure CheckBox3Click(Sender: TObject);
+    procedure ButtonShowClick(Sender: TObject);
+    procedure ComboBox1Select(Sender: TObject);
+    procedure ComboBox2Select(Sender: TObject);
+    procedure CheckBox4Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -58,11 +69,14 @@ var
   FormKeystrokeDynamics: TFormKeystrokeDynamics;
   logger : TKeylogger;
   f: TextFile;
+  ext: TExtractor;
+  PCObj: TPCA;
+  PC_Data :array of TMatrixDouble;
 
   fileArray : array [0..2] of String =
   (
     '.\Data\keylog_kirill_feature.csv',
-    '.\Data\keylog_alex_feature.csv',
+    '.\Data\keylog_alina_feature.csv',
     '.\Data\keylog_witaly_feature.csv'
   );
 implementation
@@ -91,9 +105,8 @@ begin
 end;
 
 procedure TFormKeystrokeDynamics.Button3Click(Sender: TObject);
-var ext: TExtractor;
-  Row,i: integer;
-  PCObj: TPCA;
+var
+  i,j: integer;
 begin
 
   for i :=0 to Length(fileArray)-1 do
@@ -104,14 +117,48 @@ begin
     ext.CalcStats(ext.ExtractData);
     PCObj := TPCA.Create(ext);
     PCObj.CalcPC();
-    for Row :=0 to Length(ext.NormData[0])-1 do
-    begin
-       Chart1.Series[i].AddXY(PCObj.PC[0,Row] ,PCObj.PC[1,Row]);
-    end;
+
+    SetLength(PC_Data,Length(fileArray));
+
+    PC_Data[i] := PCObj.PC;
+
     FreeAndNil(ext);
     FreeAndNil(PCObj);
   end;
+      for j :=0 to Length(PC_Data[0])-1 do
+    begin
+       ComboBox1.Items.Add((j+1).ToString());
+       ComboBox2.Items.Add((j+1).ToString());
+    end;
 
+    ComboBox1.ItemIndex := 0;
+    ComboBox2.ItemIndex := 1;
+  ShowMessage('Рассчет PCA успешен');
+  ButtonShowClick(nil);
+end;
+
+procedure TFormKeystrokeDynamics.ButtonShowClick(Sender: TObject);
+ var
+  Row,i: integer;
+begin
+  Chart1.Series[0].Clear;
+  for i :=0 to Length(fileArray)-1 do
+  begin
+   for Row :=0 to Length(PC_Data[i][ComboBox1.ItemIndex])-1 do
+    begin
+       Chart1.Series[0].AddXY(PC_Data[i][ComboBox1.ItemIndex,Row] ,PC_Data[i][ComboBox2.ItemIndex,Row]);
+    end;
+  end;
+
+  for i :=0 to Length(fileArray)-1 do
+  begin
+   Chart1.Series[i+1].Clear;
+   Chart1.Series[i+1].Title := Copy(fileArray[i],15,Length(fileArray[i])-14);
+   for Row :=0 to Length(PC_Data[i][ComboBox1.ItemIndex])-1 do
+    begin
+       Chart1.Series[i+1].AddXY(PC_Data[i][ComboBox1.ItemIndex,Row] ,PC_Data[i][ComboBox2.ItemIndex,Row]);
+    end;
+  end;
 end;
 
 procedure TFormKeystrokeDynamics.ButtonStartClick(Sender: TObject);
@@ -134,6 +181,23 @@ end;
 procedure TFormKeystrokeDynamics.CheckBox3Click(Sender: TObject);
 begin
    Data3.Visible := CheckBox3.Checked;
+end;
+
+procedure TFormKeystrokeDynamics.CheckBox4Click(Sender: TObject);
+begin
+   DataAll.Visible := CheckBox4.Checked;
+end;
+
+procedure TFormKeystrokeDynamics.ComboBox1Select(Sender: TObject);
+begin
+  Label4.Caption := 'PC'+(TComboBox(Sender).ItemIndex+1).ToString();
+  ButtonShowClick(nil);
+end;
+
+procedure TFormKeystrokeDynamics.ComboBox2Select(Sender: TObject);
+begin
+  Label5.Caption := 'PC'+(TComboBox(Sender).ItemIndex+1).ToString();
+  ButtonShowClick(nil);
 end;
 
 procedure TFormKeystrokeDynamics.EditNameUserClick(Sender: TObject);
@@ -177,6 +241,10 @@ begin
   // Chart1.View3DOptions.Rotation := TrackBarRotation.Position;
   // Chart1.View3DOptions.Elevation := TrackBarElevation.Position;
   // Chart1.View3DOptions.Zoom := TrackBarZoom.Position;
+  Chart1.ZoomPercent(100 - TrackBarZoom.Position);
+  Chart1.LeftAxis.Minimum:= -100;
+  Chart1.LeftAxis.Maximum:= 100;
+  Chart1.BottomAxis.PositionPercent:= 50;
 end;
 
 end.

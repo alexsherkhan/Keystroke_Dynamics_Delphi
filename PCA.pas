@@ -90,7 +90,7 @@ begin
   end;
 
 end;
-
+{
 procedure TPCA.SortPC();
 var
   i,j: integer;
@@ -126,12 +126,89 @@ begin
   begin
       SetLength(temp2,Length(PC[i]));
       temp2[i]:= PC[i];
-  end;
+  end;  Ú
 
   for i:=0 to High(ProportionPC) do
   begin
      PC[i] := temp2[round(temp[i,1])] ;
   end;
+end;
+}
+
+procedure BubbleSort( var a: TVector);
+var
+i, j: integer;
+tmp : Double;
+begin
+for i:=0 to High(a) do
+  for j:=0 to High(a)-i do
+    if A[j]>A[j+1] then
+    begin
+      tmp:=A[j];
+      A[j]:=A[j+1];
+      A[j+1]:=tmp;
+    end;
+end;
+
+procedure RBubbleSort( var a: TVector);
+var
+i, j: integer;
+tmp : Double;
+begin
+for i:=0 to High(a) do
+  for j:=0 to High(a)-i do
+    if A[j]<A[j+1] then
+    begin
+      tmp:=A[j];
+      A[j]:=A[j+1];
+      A[j+1]:=tmp;
+    end;
+end;
+
+function GetIndexEigenvalues(var a:TMatrixDouble;b:Double):integer;
+var
+i, j: integer;
+begin
+for i:=0 to High(a) do
+  if a[i,0] = b then Result := Round(a[i,1])
+  else continue;
+end;
+
+procedure TPCA.SortPC();
+var
+  i,j,min: integer;
+  temp,temp2: TMatrixDouble;
+  p,index: Double;
+begin
+  SetLength(temp,Length(Eigenvalues));
+
+  for i:=0 to High(Eigenvalues) do
+  begin
+    SetLength(temp[i],2);
+    temp[i,0] := Eigenvalues[i];
+    temp[i,1] := i;
+  end;
+
+  RBubbleSort(Eigenvalues);
+
+  SetLength(temp2,Length(Eigenvectors));
+
+  for i:=0 to High(Eigenvalues) do
+  begin
+      SetLength(temp2,Length(Eigenvectors[i]));
+      temp2[i]:= Eigenvectors[GetIndexEigenvalues(temp,Eigenvalues[i])];
+  end;
+   Eigenvectors  := temp2;
+
+  {
+   SetLength(temp2,Length(PC));
+
+  for i:=0 to High(Eigenvalues) do
+  begin
+      SetLength(temp2,Length(Eigenvectors[i]));
+      temp2[i]:= PC[GetIndexEigenvalues(temp,Eigenvalues[i])];
+  end;
+   PC  := temp2; }
 end;
 
 procedure TPCA.CalcPC(SortB:Boolean);
@@ -162,6 +239,7 @@ begin
   CalcProportionPC();
 
   CountPC := Length(Eigenvectors);
+  SortPC();
   SetLength(PC,CountPC);
 
   for i := 0 to Length(NormData)-1 do
@@ -171,7 +249,7 @@ begin
     PC[i,j] := Sum();
   end;
   if SortB then
-    SortPC();
+  //  SortPC();
 end;
 
 end.
