@@ -7,7 +7,8 @@ uses
   Data_Time in 'Data_Time.pas',
   Feature_Extractor in 'Feature_Extractor.pas',
   PCA in 'PCA.pas',
-  Lib_TRED2_TQLI2 in 'Lib_TRED2_TQLI2.pas';
+  Lib_TRED2_TQLI2 in 'Lib_TRED2_TQLI2.pas',
+  FCM in 'FCM.pas';
 
 {$R *.res}
 

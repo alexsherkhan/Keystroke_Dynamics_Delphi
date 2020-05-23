@@ -5,10 +5,10 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Generics.Collections,Keylogger,
-  Vcl.StdCtrls, Vcl.Grids, VclTee.TeeGDIPlus, VCLTee.TeEngine,
-  Vcl.ExtCtrls, VCLTee.TeeProcs, VCLTee.Chart,Feature_Extractor
+  Vcl.StdCtrls, Vcl.Grids, VCLTee.Chart,Feature_Extractor
   ,Data_Time,DateUtils, Vcl.Imaging.pngimage, VCLTee.Series,
-  Vcl.ComCtrls, Lib_TRED2_TQLI2,PCA;
+  Vcl.ComCtrls, Lib_TRED2_TQLI2,PCA, VclTee.TeeGDIPlus, VCLTee.TeEngine,
+  Vcl.ExtCtrls, VCLTee.TeeProcs;
 
 type
   TFormKeystrokeDynamics = class(TForm)
@@ -76,7 +76,7 @@ var
   fileArray : array [0..2] of String =
   (
     '.\Data\keylog_kirill_feature.csv',
-    '.\Data\keylog_alina_feature.csv',
+    '.\Data\keylog_alex_feature.csv',
     '.\Data\keylog_witaly_feature.csv'
   );
 implementation

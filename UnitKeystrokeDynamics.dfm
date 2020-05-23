@@ -192,7 +192,6 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
     DefaultCanvas = 'TGDIPlusCanvas'
     ColorPaletteIndex = 13
     object DataAll: TPointSeries
-      HoverElement = [heCurrent]
       ClickableLine = False
       Pointer.InflateMargins = True
       Pointer.Style = psRectangle
@@ -202,7 +201,6 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
       YValues.Order = loNone
     end
     object Data1: TPointSeries
-      HoverElement = [heCurrent]
       ClickableLine = False
       Pointer.InflateMargins = True
       Pointer.Style = psRectangle
@@ -212,7 +210,6 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
       YValues.Order = loNone
     end
     object Data2: TPointSeries
-      HoverElement = [heCurrent]
       ClickableLine = False
       Pointer.InflateMargins = True
       Pointer.Style = psRectangle
@@ -222,7 +219,6 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
       YValues.Order = loNone
     end
     object Data3: TPointSeries
-      HoverElement = [heCurrent]
       ClickableLine = False
       Pointer.InflateMargins = True
       Pointer.Style = psRectangle

@@ -167,7 +167,7 @@ end;
 
 function GetIndexEigenvalues(var a:TMatrixDouble;b:Double):integer;
 var
-i, j: integer;
+i: integer;
 begin
 for i:=0 to High(a) do
   if a[i,0] = b then Result := Round(a[i,1])
@@ -176,9 +176,8 @@ end;
 
 procedure TPCA.SortPC();
 var
-  i,j,min: integer;
+  i: integer;
   temp,temp2: TMatrixDouble;
-  p,index: Double;
 begin
   SetLength(temp,Length(Eigenvalues));
 
