@@ -118,7 +118,7 @@ begin
     ext.LoadCSVFile(fileArray[i],';',14,true);
     ext.CalcStats(ext.ExtractData);
     PCObj := TPCA.Create(ext);
-    PCObj.CalcPC();
+    PCObj.CalcPC(true,10);
 
     SetLength(PC_Data,Length(fileArray));
 
@@ -156,7 +156,7 @@ begin
     ext.LoadCSVFile(opendialog1.FileName,';',2,true);
     ext.CalcStats(ext.ExtractData);
     PCObj := TPCA.Create(ext);
-    PCObj.CalcPC();
+    PCObj.CalcPC(true,10);
 
     SetLength(PC_Data,Length(fileArray));
 
@@ -169,7 +169,7 @@ begin
         end;
       end;
   end;
-  ShowMessage('Рассчет PCA успешен');
+  //ShowMessage('Рассчет PCA успешен');
 
   SetLength(v,Length(PCObj.PC[0]));
 
@@ -210,9 +210,9 @@ begin
               end;
             end;
 
-            if index = 0 then  color :=  65280; //Ярко-зелёный
-            if index = 1 then  color := 16711680; //синий
-            if index = 2  then  color := 65535; //желтый
+            if index = 0 then  color :=  $00359CF3;
+            if index = 1 then  color := $00144CF1;
+            if index = 2  then  color := $00A8974E;
 
            Chart1.Series[0].AddXY(v[Row].x ,v[Row].y,'',color);
         end;

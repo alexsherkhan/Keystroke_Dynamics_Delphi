@@ -47,7 +47,7 @@ type
       /// <summary>
       ///   Рассчет компонент
       /// </summary>
-      procedure CalcPC(SortB:Boolean = true);
+      procedure CalcPC(SortB:Boolean; d: Integer);
       /// <summary>
       ///   Сортировка компонент по доли вклада
       /// </summary>
@@ -200,18 +200,18 @@ begin
   end;
    Eigenvectors  := temp2;
 
-  {
-   SetLength(temp2,Length(PC));
+
+   SetLength(temp2,Length(NormData));
 
   for i:=0 to High(Eigenvalues) do
   begin
       SetLength(temp2,Length(Eigenvectors[i]));
-      temp2[i]:= PC[GetIndexEigenvalues(temp,Eigenvalues[i])];
+      temp2[i]:= NormData[GetIndexEigenvalues(temp,Eigenvalues[i])];
   end;
-   PC  := temp2; }
+   NormData  := temp2;
 end;
 
-procedure TPCA.CalcPC(SortB:Boolean);
+procedure TPCA.CalcPC(SortB:Boolean; d: Integer);
 var
   i,j,err: integer;
   e : TVector;
@@ -223,7 +223,7 @@ var
     Sum := 0;
     for k := 0 to High(Eigenvectors[i]) do
     begin
-      Sum := Sum + Eigenvectors[i,k]* NormData[k,j]{* NormData[k,j+1]};
+      Sum := Sum + Eigenvectors[i,k]* NormData[k,j];
     end;
     Result := Sum;
   end;
@@ -245,13 +245,13 @@ begin
 
   CalcProportionPC();
 
-  for i := 0 to Length(NormData)-1 do
+  for i := 0 to d{Length(NormData)}-1 do
     for j := 0 to Length(NormData[i])-1 do
   begin
     SetLength(PC[i],Length(NormData[i]));
     PC[i,j] := Sum();
   end;
-  if SortB then
+ // if SortB then
   //  SortPC();
 end;
 
