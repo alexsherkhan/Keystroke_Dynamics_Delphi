@@ -4,7 +4,7 @@ unit PCA;
 interface
 
 uses
-    Lib_TRED2_TQLI2,Feature_Extractor,Math;
+    Lib_TRED2_TQLI2,TypesForKD,Feature_Extractor,Math;
 type
   TPCA = class
       /// <summary>
@@ -60,6 +60,7 @@ implementation
 constructor TPCA.Create(ext :TExtractor) overload;
 begin
   ext.NormalizationAndCenter;
+  //ext.Normalization;
   NormData := ext.NormData;
   ext.CalcCovarAndCorrel(ext.NormData,ext.FAvgValue,ext.CovarMatrix,ext.CorrelMatrix);
 
@@ -222,11 +223,12 @@ var
     Sum := 0;
     for k := 0 to High(Eigenvectors[i]) do
     begin
-      Sum := Sum + Eigenvectors[i,k]* NormData[k,j];
+      Sum := Sum + Eigenvectors[i,k]* NormData[k,j]{* NormData[k,j+1]};
     end;
     Result := Sum;
   end;
 begin
+
   Eigenvectors := CovarMatrix;
   SetLength(Eigenvalues,Length(CovarMatrix));
   SetLength(e,Length(CovarMatrix));
@@ -235,11 +237,13 @@ begin
   tred2(Length(CovarMatrix),1,Eigenvectors,Eigenvalues,e);
   tqli2(Length(CovarMatrix),30,Eigenvectors,Eigenvalues,e,err);
 
-  CalcProportionPC();
+
 
   CountPC := Length(Eigenvectors);
   SortPC();
   SetLength(PC,CountPC);
+
+  CalcProportionPC();
 
   for i := 0 to Length(NormData)-1 do
     for j := 0 to Length(NormData[i])-1 do

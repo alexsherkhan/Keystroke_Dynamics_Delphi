@@ -4,15 +4,7 @@
 unit FCM;
 
 interface
-uses  Lib_TRED2_TQLI2, Math;
-
-  type TPoint = record
-    x: Double;
-    y: Double;
-  end;
-
-  type TVectorPoints = Array Of TPoint;
-  type TMatrixPoints = Array Of TVectorPoints;
+uses  Lib_TRED2_TQLI2, Math,TypesForKD;
 
  type
   /// <summary>
@@ -95,19 +87,7 @@ uses  Lib_TRED2_TQLI2, Math;
       /// </returns>
       function FillUMatrix(PointsCount: Integer; ClustersCount: Integer): TMatrixDouble;
 
-      /// <summary>
-      ///   Рассчет Евклидового расстояния между точками A и B
-      /// </summary>
-      /// <param name="pointA">
-      ///   Точка A
-      /// </param>
-      /// <param name="pointB">
-      ///   Точка B
-      /// </param>
-      /// <returns>
-      ///   Евклидово расстояние между точками A и B
-      /// </returns>
-      function EvklidDistance( pointA:TPoint; pointB:TPoint) : Double;
+
 
       /// <summary>
       ///   Вычисление точек центров кластеров <br />
@@ -181,6 +161,19 @@ uses  Lib_TRED2_TQLI2, Math;
       function DistributeOverMatrixU(Points :TVectorPoints; M:Double;
                 var Centers: TVectorPoints):TMatrixDouble;
   end;
+        /// <summary>
+      ///   Рассчет Евклидового расстояния между точками A и B
+      /// </summary>
+      /// <param name="pointA">
+      ///   Точка A
+      /// </param>
+      /// <param name="pointB">
+      ///   Точка B
+      /// </param>
+      /// <returns>
+      ///   Евклидово расстояние между точками A и B
+      /// </returns>
+      function EvklidDistance( pointA:TPoint; pointB:TPoint) : Double;
 implementation
 
 constructor TFCM.Create(nEPLSION: Double = 0.1;
@@ -205,8 +198,8 @@ begin
 
   for i:=0 to Count-1 do
   begin
-    Points[i].x := Random(1);
-    Points[i].y := Random(1);
+    Points[i].x := Random;
+    Points[i].y := Random;
   end;
 
   Result := points;
@@ -237,7 +230,7 @@ begin
     begin
         SetLength(MatrixU[i],ClustersCount);
         for j:=0 to ClustersCount-1 do
-            MatrixU[i,j] := Random(1);
+            MatrixU[i,j] := Random;
 
         TVector(MatrixU[i]) := normalizeUMatrixRow(TVector(MatrixU[i]));
     end;
@@ -245,12 +238,12 @@ begin
   Result := MatrixU;
 end;
 
-function TFCM.EvklidDistance( pointA:TPoint; pointB:TPoint) : Double;
+function EvklidDistance( pointA:TPoint; pointB:TPoint) : Double;
 var
   distance1,distance2,distance : Double;
 begin
-    distance1 := Power((pointA.x - pointB.x),2);
-    distance2 := Power((pointA.x - pointB.y),2);
+    distance1 := (pointA.x - pointB.x)*(pointA.x - pointB.x);
+    distance2 := (pointA.y - pointB.y)*(pointA.y - pointB.y);
     distance := distance1 + distance2;
     Result := sqrt(distance);
 end;
@@ -335,7 +328,7 @@ begin
            for clusterIndex:=0 to High(MatrixU[key]) do
            begin
              distance := evklidDistance(Points[key], centers[clusterIndex]);
-             uRow[key] := prepareU(distance, M);
+             uRow[clusterIndex] := prepareU(distance, M);
            end;
 
             uRow := normalizeUMatrixRow(uRow);

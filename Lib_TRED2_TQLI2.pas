@@ -4,11 +4,8 @@
 unit Lib_TRED2_TQLI2;
 
 interface
+uses TypesForKD;
 
-type
-      TMatrixDouble = Array Of Array Of Double;
-      TVector = Array Of Double;
-      TReal = Real;
 /// <summary>
 ///   Редукция Хаусхолдера <br />Приведение симметрической матрицы А к
 ///   трехдиагональной форме с помощью <br />преобразования Хаусхолдера с
@@ -31,7 +28,7 @@ type
 /// <param name="e">
 ///   Поддиагональные элементы матрицы <br />
 /// </param>
-procedure tred2(n : integer; tol : treal; var a : tmatrixDouble; var d,e : tvector);
+procedure tred2(n : integer; tol : real; var a : tmatrixDouble; var d,e : tvector);
 
 /// <summary>
 ///   Нахождение собственных значений и собственных векторов <br />симметричной
@@ -63,8 +60,8 @@ procedure tqli2(n,maxiter : integer; var z : tmatrixDouble; var d,e : tvector; v
 
 implementation
 
-procedure tred2(n : integer; tol : treal; var a : tmatrixDouble; var d,e : tvector);
-var i,j,k,l : integer; f,g,h,hh : treal;
+procedure tred2(n : integer; tol : real; var a : tmatrixDouble; var d,e : tvector);
+var i,j,k,l : integer; f,g,h,hh : real;
 begin
   SetLength(e,Length(a));
   SetLength(d,Length(a));

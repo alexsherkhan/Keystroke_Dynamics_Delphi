@@ -275,6 +275,15 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
     TabOrder = 13
     OnClick = CheckBox4Click
   end
+  object Button4: TButton
+    Left = 270
+    Top = 456
+    Width = 75
+    Height = 25
+    Caption = #1055#1088#1086#1074#1077#1088#1082#1072
+    TabOrder = 14
+    OnClick = Button4Click
+  end
   object OpenDialog1: TOpenDialog
     Left = 32
     Top = 432

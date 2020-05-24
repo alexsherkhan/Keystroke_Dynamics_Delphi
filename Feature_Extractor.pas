@@ -4,7 +4,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls,Clipbrd,Data_Time,Vcl.Grids,DateUtils,Math,
-  Lib_TRED2_TQLI2;
+  Lib_TRED2_TQLI2, TypesForKD;
 
 type
   TExtractor = class(TObject)
@@ -30,7 +30,13 @@ type
       ///   Средние значения столбцов (переменных) исходных данных
       /// </summary>
       AvgValue: Array of Double;
+      /// <summary>
+      ///   Ковариляционная матрица
+      /// </summary>
       CovarMatrix : TMatrixDouble;
+      /// <summary>
+      ///   Корреляционная матрица
+      /// </summary>
       CorrelMatrix : TMatrixDouble;
       property DataGrid: TStringGrid read FDataGrid write FDataGrid;
       //property NormData: Array of Array of Double read FNormData write FNormData;
@@ -52,7 +58,7 @@ type
       /// <param name="Ext">
       ///   Извлеченные характеристики(True) или нет(False)
       /// </param>
-      procedure LoadCSVFile(FileName: String; separator: char; Ext :Boolean = false);
+      procedure LoadCSVFile(FileName: String; separator: char; NumCol:Integer = 14; Ext :Boolean = false);
       /// <summary>
       ///   Извлечение характеристик ввода текста с клавиатуры из файла
       /// </summary>
@@ -93,11 +99,69 @@ type
       ///   Тест нормализации и центрирования
       /// </summary>
       function TestNormalizationAndCenter():Boolean;
+      procedure Normalization();
 
       constructor Create();
       destructor Destroy; override;
   end;
- { procedure Trans(var AData: TMatrixDouble);}
+
+  /// <summary>
+  ///   Сторона нажатия клавиши
+  /// </summary>
+  function LatencySide(x:string):string;
+  /// <summary>
+  ///   Категория задержки
+  /// </summary>
+  function Categorize(CodeChar1:string; Shift1:string;CodeChar2:string;Shift2:string):integer;
+
+  /// <summary>
+  ///   Категория времени удержания
+  /// </summary>
+  function HoldtimeCategorize(CodeChar1:string; Shift:string):integer;
+
+  /// <summary>
+  ///   Сбор нескольких файлов в один
+  /// </summary>
+  /// <param name="FileName">
+  ///   Имя создаваемого файла
+  /// </param>
+  /// <param name="FileArray">
+  ///   Массив имен файлов
+  /// </param>
+  procedure CollectFiles(FileName: String; FileArray :array of String);
+
+  /// <summary>
+  ///   Сумма вектора
+  /// </summary>
+  /// <param name="v">
+  ///   Вектор
+  /// </param>
+  function SumVestor(v:TVector):Double;
+
+  /// <summary>
+  ///   Рассчет дисперсии
+  /// </summary>
+  /// <param name="AData">
+  ///   Матрица данных
+  /// </param>
+  /// <param name="AvgValue">
+  ///   Массив средних значений
+  /// </param>
+  /// <param name="Dispersion">
+  ///   Массив дисперсий
+  /// </param>
+  procedure CalcDispersion(AData:TMatrixDouble; AvgValue:Array of Double; var Dispersion:Array of Double );
+
+  /// <summary>
+  ///   Рассчет средних значений
+  /// </summary>
+  /// <param name="AData">
+  ///   Матрица данных
+  /// </param>
+  /// <param name="Av">
+  ///   Массив средних значению
+  /// </param>
+  procedure CalcAvg(AData: TMatrixDouble; var Av: Array of Double);
 
   var Side_dict : array [0..58,0..1] of string
  =
@@ -189,7 +253,7 @@ begin
       Result :=4
 end;
 
-procedure TExtractor.LoadCSVFile(FileName: String; separator: char; Ext :Boolean = false);
+procedure TExtractor.LoadCSVFile(FileName: String; separator: char; NumCol:Integer = 14; Ext :Boolean = false);
 var f: TextFile;
     s1, s2: string;
     i, j: integer;
@@ -199,7 +263,7 @@ begin
   FMaxValue := MinDouble;
 
    if Ext then
-    SetLength(ExtractData,14);
+    SetLength(ExtractData,NumCol);
  i := 0;
 
  AssignFile (f, FileName);
@@ -276,6 +340,39 @@ function SumVestor(v:TVector):Double;
     end;
     Result := Sum;
   end;
+
+procedure CollectFiles(FileName: String; FileArray :array of String);
+var f,f2: TextFile;
+i :Integer;
+s : String;
+k : Boolean;
+begin
+
+   AssignFile(f,'./Data/'+FileName +'_all' + '.csv');
+   Rewrite(f);
+   k:= false;
+
+   for i := 0 to High(FileArray) do
+   begin
+    AssignFile(f2,FileArray[i]);
+    if FileExists(FileArray[i]) then
+      Reset(f2);
+
+    while (not EOF(f2)) do begin
+      Readln(f2, s);
+      if i = 0 then k:=true;
+      
+      if k then
+        WriteLn(f, s);
+      k := true;
+    end;
+    k:= false;
+      Close(f2);
+   end;
+
+   Close(f);
+end;
+
 
 procedure TExtractor.Extract(FileName: String);
 var f: TextFile;
@@ -439,18 +536,6 @@ begin
  CloseFile(f);
 end;
 
-/// <summary>
-///   Рассчет дисперсии
-/// </summary>
-/// <param name="AData">
-///   Матрица данных
-/// </param>
-/// <param name="AvgValue">
-///   Массив средних значений
-/// </param>
-/// <param name="Dispersion">
-///   Массив дисперсий
-/// </param>
 procedure CalcDispersion(AData:TMatrixDouble; AvgValue:Array of Double; var Dispersion:Array of Double );
 var
   Col, Row: Integer;
@@ -502,6 +587,21 @@ begin
 
 end;
 
+procedure TExtractor.Normalization();
+var Col, Row: integer;
+begin
+
+  for Col := 0 to Length(ExtractData)-1 do
+  begin
+    SetLength(NormData,Length(ExtractData));
+    for Row := 0 to Length(ExtractData[Col])-1 do
+    begin
+      SetLength(NormData[Col],Length(ExtractData[Col]));
+      NormData[Col, Row] := (ExtractData[Col, Row] - FAvgValue[Col]);
+    end;
+  end;
+end;
+
 procedure TExtractor.NormalizationAndCenter();
 var Col, Row: integer;
 begin
@@ -517,15 +617,6 @@ begin
   end;
 end;
 
-/// <summary>
-///   Рассчет средних значений
-/// </summary>
-/// <param name="AData">
-///   Матрица данных
-/// </param>
-/// <param name="Av">
-///   Массив средних значению
-/// </param>
 procedure CalcAvg(AData: TMatrixDouble; var Av: Array of Double);
 var Col,Row: integer;
 begin

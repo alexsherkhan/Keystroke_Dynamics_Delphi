@@ -6,9 +6,9 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Generics.Collections,Keylogger,
   Vcl.StdCtrls, Vcl.Grids, VCLTee.Chart,Feature_Extractor
-  ,Data_Time,DateUtils, Vcl.Imaging.pngimage, VCLTee.Series,
-  Vcl.ComCtrls, Lib_TRED2_TQLI2,PCA, VclTee.TeeGDIPlus, VCLTee.TeEngine,
-  Vcl.ExtCtrls, VCLTee.TeeProcs;
+  ,Data_Time,DateUtils, TypesForKD, Vcl.Imaging.pngimage, VCLTee.Series,
+  Vcl.ComCtrls, Lib_TRED2_TQLI2,PCA,FCM, VclTee.TeeGDIPlus, VCLTee.TeEngine,
+  Vcl.ExtCtrls, VCLTee.TeeProcs,Math;
 
 type
   TFormKeystrokeDynamics = class(TForm)
@@ -42,6 +42,7 @@ type
     Label5: TLabel;
     DataAll: TPointSeries;
     CheckBox4: TCheckBox;
+    Button4: TButton;
     procedure FormCreate(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -59,6 +60,7 @@ type
     procedure ComboBox1Select(Sender: TObject);
     procedure ComboBox2Select(Sender: TObject);
     procedure CheckBox4Click(Sender: TObject);
+    procedure Button4Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -113,7 +115,7 @@ begin
   begin
     Chart1.Series[i].Clear;
     ext := TExtractor.Create();
-    ext.LoadCSVFile(fileArray[i],';',true);
+    ext.LoadCSVFile(fileArray[i],';',14,true);
     ext.CalcStats(ext.ExtractData);
     PCObj := TPCA.Create(ext);
     PCObj.CalcPC();
@@ -135,6 +137,94 @@ begin
     ComboBox2.ItemIndex := 1;
   ShowMessage('Рассчет PCA успешен');
   ButtonShowClick(nil);
+end;
+
+procedure TFormKeystrokeDynamics.Button4Click(Sender: TObject);
+var
+  i,j,Row, color,index: integer;
+  fcmObj : TFCM;
+  v,centrs :TVectorPoints;
+  matrix : TMatrixDouble;
+  vec,dis: TVector;
+  minv ,maxdis: Double;
+begin
+  if opendialog1.Execute then
+  begin
+    Chart1.Series[0].Clear;
+    ext := TExtractor.Create();
+   //CollectFiles('data',fileArray);
+    ext.LoadCSVFile(opendialog1.FileName,';',2,true);
+    ext.CalcStats(ext.ExtractData);
+    PCObj := TPCA.Create(ext);
+    PCObj.CalcPC();
+
+    SetLength(PC_Data,Length(fileArray));
+
+    //PC_Data[i] := PCObj.PC;
+      for i :=0 to Length(PCObj.PC)-1 do
+      begin
+       for Row :=0 to Length(PCObj.PC[0])-1 do
+        begin
+           Chart1.Series[0].AddXY(PCObj.PC[0,Row] ,PCObj.PC[1,Row]);
+        end;
+      end;
+  end;
+  ShowMessage('Рассчет PCA успешен');
+
+  SetLength(v,Length(PCObj.PC[0]));
+
+
+       for Row :=0 to Length(PCObj.PC[0])-1 do
+        begin
+           v[Row].x:= PCObj.PC[0,Row];
+           v[Row].y:= PCObj.PC[1,Row];
+        end;
+
+    fcmObj := TFCM.Create(0.1,1000,Length(v),3);
+
+   matrix := fcmObj.DistributeOverMatrixU(v,fcmObj.Fuzz,centrs);
+
+
+   for i :=0 to Length(v)-1 do
+        begin
+        //  Memo1.Lines.Add(i.ToString()+'|  '+v[i].x.ToString()+'|  '+v[i].y.ToString());
+        end;
+
+       for i :=0 to Length(matrix)-1 do
+        begin
+       //   Memo1.Lines.Add(i.ToString()+'|  '+matrix[i,0].ToString()+'|  '+matrix[i,1].ToString()+'|  '+matrix[i,2].ToString());
+        end;
+  //Chart1.Series[0].Clear;
+
+        SetLength(vec,fcmObj.ClustersNum);
+        SetLength(dis,fcmObj.ClustersNum);
+       for Row :=0 to Length(v)-1 do
+        begin
+
+            for i :=0 to Length(vec)-1 do
+            begin
+              if matrix[row,i]>0.5 then
+              begin
+                index := i;
+                break;
+              end;
+            end;
+
+            if index = 0 then  color :=  65280; //Ярко-зелёный
+            if index = 1 then  color := 16711680; //синий
+            if index = 2  then  color := 65535; //желтый
+
+           Chart1.Series[0].AddXY(v[Row].x ,v[Row].y,'',color);
+        end;
+
+     Chart1.Series[0].AddXY(centrs[0].x,centrs[0].y,'',32768);
+     Chart1.Series[0].AddXY(centrs[1].x,centrs[1].y,'',16776960);
+     Chart1.Series[0].AddXY(centrs[2].x,centrs[2].y,'',32896);
+
+
+  FreeAndNil(ext);
+  FreeAndNil(PCObj);
+  FreeAndNil(fcmObj);
 end;
 
 procedure TFormKeystrokeDynamics.ButtonShowClick(Sender: TObject);
