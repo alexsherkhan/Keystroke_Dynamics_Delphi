@@ -116,7 +116,7 @@ begin
     Chart1.Series[i].Clear;
     ext := TExtractor.Create();
     ext.LoadCSVFile(fileArray[i],';',14,true);
-    ext.CalcStats(ext.ExtractData);
+    //ext.CalcStats(ext.ExtractData);
     PCObj := TPCA.Create(ext);
     PCObj.CalcPC(true,10);
 
@@ -154,7 +154,7 @@ begin
     ext := TExtractor.Create();
    //CollectFiles('data',fileArray);
     ext.LoadCSVFile(opendialog1.FileName,';',2,true);
-    ext.CalcStats(ext.ExtractData);
+    //ext.CalcStats(ext.ExtractData);
     PCObj := TPCA.Create(ext);
     PCObj.CalcPC(true,10);
 
