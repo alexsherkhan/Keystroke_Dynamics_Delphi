@@ -12,7 +12,6 @@ type
       FDataGrid : TStringGrid;
       FMinValue: Double;
       FMaxValue: Double;
-      FDispersion: Array of Double;
       FColCount: Integer;
       FRowCount: Integer;
     public
@@ -21,27 +20,10 @@ type
       ///   Матрица извлеченных данных
       /// </summary>
       ExtractData : TMatrixDouble;
-      /// <summary>
-      ///   Матрица нормализованых и центрированных данных
-      /// </summary>
-      NormData : TMatrixDouble;
-      /// <summary>
-      ///   Средние значения столбцов (переменных) исходных данных
-      /// </summary>
-      AvgValue: Array of Double;
-      /// <summary>
-      ///   Ковариляционная матрица
-      /// </summary>
-      CovarMatrix : TMatrixDouble;
-      /// <summary>
-      ///   Корреляционная матрица
-      /// </summary>
-      CorrelMatrix : TMatrixDouble;
+
       property DataGrid: TStringGrid read FDataGrid write FDataGrid;
-      //property NormData: Array of Array of Double read FNormData write FNormData;
       property MinValue: Double read FMinValue write FMinValue;
       property MaxValue: Double read FMaxValue write FMaxValue;
-      //property AvgValue: Array of Double read FAvgValue write FAvgValue;
       property ColCount: Integer read FColCount write FColCount;
       property RowCount: Integer read FRowCount write FRowCount;
 

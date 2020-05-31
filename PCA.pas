@@ -23,7 +23,6 @@ type
       ///   Средние значения столбцов (переменных) исходных данных
       /// </summary>
       AvgValue: Array of Double;
-
       /// <summary>
       ///   Нормированые данные
       /// </summary>
@@ -65,9 +64,10 @@ type
       ///   Матрица данных
       /// </param>
       procedure CalcStats(AData: TMatrixDouble);
-
+      /// <summary>
+      ///   Нормализация
+      /// </summary>
       procedure Normalization();
-
       /// <summary>
       ///   Нормализация и центрирование
       /// </summary>
@@ -147,9 +147,6 @@ implementation
 constructor TPCA.Create(ext :TExtractor) overload;
 begin
   ExtractData := ext.ExtractData;
-  CalcStats(ExtractData);
-  NormalizationAndCenter;
-  CalcCovarAndCorrel(NormData,FAvgValue,CovarMatrix,CorrelMatrix);
 end;
 
 procedure TPCA.CalcStats(AData: TMatrixDouble);
@@ -460,6 +457,9 @@ var
     Result := Sum;
   end;
 begin
+  CalcStats(ExtractData);
+  NormalizationAndCenter;
+  CalcCovarAndCorrel(NormData,FAvgValue,CovarMatrix,CorrelMatrix);
 
   Eigenvectors := CovarMatrix;
   SetLength(Eigenvalues,Length(CovarMatrix));
@@ -477,14 +477,13 @@ begin
 
   CalcProportionPC();
 
-  for i := 0 to d{Length(NormData)}-1 do
+  for i := 0 to d-1 do
     for j := 0 to Length(NormData[i])-1 do
   begin
     SetLength(PC[i],Length(NormData[i]));
     PC[i,j] := Sum();
   end;
- // if SortB then
-  //  SortPC();
+
 end;
 
 end.
