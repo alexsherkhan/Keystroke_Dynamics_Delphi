@@ -9,7 +9,8 @@ uses
   PCA in 'PCA.pas',
   Lib_TRED2_TQLI2 in 'Lib_TRED2_TQLI2.pas',
   FCM in 'FCM.pas',
-  TypesForKD in 'TypesForKD.pas';
+  TypesForKD in 'TypesForKD.pas',
+  UnitDataAfterPCA in 'UnitDataAfterPCA.pas' {FormDataPCA};
 
 {$R *.res}
 
@@ -18,5 +19,6 @@ begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TFormKeystrokeDynamics, FormKeystrokeDynamics);
+  Application.CreateForm(TFormDataPCA, FormDataPCA);
   Application.Run;
 end.
