@@ -6,13 +6,11 @@ interface
 uses
     Lib_TRED2_TQLI2,TypesForKD,Feature_Extractor,Math;
 type
-  TPCA = class
+  TPCA = class(TObject)
      private
       FMinValue: Double;
       FMaxValue: Double;
       FDispersion: Array of Double;
-      FColCount: Integer;
-      FRowCount: Integer;
      public
       FAvgValue: Array of Double;
       /// <summary>

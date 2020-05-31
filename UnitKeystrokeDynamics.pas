@@ -8,7 +8,7 @@ uses
   Vcl.StdCtrls, Vcl.Grids, VCLTee.Chart,Feature_Extractor
   ,Data_Time,DateUtils, TypesForKD, Vcl.Imaging.pngimage, VCLTee.Series,
   Vcl.ComCtrls, Lib_TRED2_TQLI2,PCA,FCM, VclTee.TeeGDIPlus, VCLTee.TeEngine,
-  Vcl.ExtCtrls, VCLTee.TeeProcs,Math;
+  Vcl.ExtCtrls, VCLTee.TeeProcs,Math, UnitDataAfterPCA;
 
 type
   TFormKeystrokeDynamics = class(TForm)
@@ -22,27 +22,18 @@ type
     Memo1: TMemo;
     Button3: TButton;
     CheckBox1: TCheckBox;
-    CheckBox2: TCheckBox;
-    TrackBarRotation: TTrackBar;
-    TrackBarElevation: TTrackBar;
-    TrackBarZoom: TTrackBar;
-    Label1: TLabel;
-    Label2: TLabel;
-    Label3: TLabel;
     Chart1: TChart;
-    Data1: TPointSeries;
-    Data2: TPointSeries;
+    FCM: TPointSeries;
     OpenDialog1: TOpenDialog;
-    Data3: TPointSeries;
-    CheckBox3: TCheckBox;
     ComboBox1: TComboBox;
     ComboBox2: TComboBox;
     ButtonShow: TButton;
     Label4: TLabel;
     Label5: TLabel;
-    DataAll: TPointSeries;
+    PCA: TPointSeries;
     CheckBox4: TCheckBox;
     Button4: TButton;
+    GroupBox2: TGroupBox;
     procedure FormCreate(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -52,10 +43,7 @@ type
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure CheckBox1Click(Sender: TObject);
-    procedure CheckBox2Click(Sender: TObject);
-    procedure TrackBarRotationChange(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    procedure CheckBox3Click(Sender: TObject);
     procedure ButtonShowClick(Sender: TObject);
     procedure ComboBox1Select(Sender: TObject);
     procedure ComboBox2Select(Sender: TObject);
@@ -110,7 +98,7 @@ procedure TFormKeystrokeDynamics.Button3Click(Sender: TObject);
 var
   i,j: integer;
 begin
-
+   {
   for i :=0 to Length(fileArray)-1 do
   begin
     Chart1.Series[i].Clear;
@@ -126,6 +114,28 @@ begin
 
     FreeAndNil(ext);
     FreeAndNil(PCObj);
+  end; }
+
+   if opendialog1.Execute then
+  begin
+    Chart1.Series[0].Clear;
+    ext := TExtractor.Create();
+    //CollectFiles('data',fileArray);
+    ext.LoadCSVFile(opendialog1.FileName,';',2,true);
+    PCObj := TPCA.Create(ext);
+    PCObj.CalcPC(true,10);
+
+    SetLength(PC_Data,Length(fileArray));
+
+    PC_Data[0] := PCObj.PC;
+      for i :=0 to Length(PCObj.PC)-1 do
+      begin
+       for j :=0 to Length(PCObj.PC[0])-1 do
+        begin
+           Chart1.Series[0].AddXY(PCObj.PC[0,j] ,PCObj.PC[1,j]);
+        end;
+      end;
+
   end;
       for j :=0 to Length(PC_Data[0])-1 do
     begin
@@ -136,6 +146,14 @@ begin
     ComboBox1.ItemIndex := 0;
     ComboBox2.ItemIndex := 1;
   ShowMessage('Рассчет PCA успешен');
+  FormDataPCA.ObjPCA := PCObj;
+  FormDataPCA.left:=FormKeystrokeDynamics.left;
+  FormDataPCA.top:=FormKeystrokeDynamics.top;
+  FormDataPCA.Show;
+
+  FreeAndNil(ext);
+  FreeAndNil(PCObj);
+
   ButtonShowClick(nil);
 end;
 
@@ -148,39 +166,19 @@ var
   vec,dis: TVector;
   minv ,maxdis: Double;
 begin
-  if opendialog1.Execute then
-  begin
-    Chart1.Series[0].Clear;
-    ext := TExtractor.Create();
-   //CollectFiles('data',fileArray);
-    ext.LoadCSVFile(opendialog1.FileName,';',2,true);
-    //ext.CalcStats(ext.ExtractData);
-    PCObj := TPCA.Create(ext);
-    PCObj.CalcPC(true,10);
 
-    SetLength(PC_Data,Length(fileArray));
 
-    //PC_Data[i] := PCObj.PC;
-      for i :=0 to Length(PCObj.PC)-1 do
-      begin
-       for Row :=0 to Length(PCObj.PC[0])-1 do
+  Button3Click(nil);
+
+  SetLength(v,Length(PC_Data[0][0]));
+  for Row :=0 to Length(PC_Data[0][0])-1 do
         begin
-           Chart1.Series[0].AddXY(PCObj.PC[0,Row] ,PCObj.PC[1,Row]);
-        end;
-      end;
-  end;
-  //ShowMessage('Рассчет PCA успешен');
-
-  SetLength(v,Length(PCObj.PC[0]));
-
-
-       for Row :=0 to Length(PCObj.PC[0])-1 do
-        begin
-           v[Row].x:= PCObj.PC[0,Row];
-           v[Row].y:= PCObj.PC[1,Row];
+           v[Row].x:= PC_Data[0][0,Row];
+           v[Row].y:= PC_Data[0][1,Row];
         end;
 
-    fcmObj := TFCM.Create(0.1,1000,Length(v),3);
+  // FCM
+  fcmObj := TFCM.Create(0.1,1000,Length(v),3);
 
    matrix := fcmObj.DistributeOverMatrixU(v,fcmObj.Fuzz,centrs);
 
@@ -194,7 +192,7 @@ begin
         begin
        //   Memo1.Lines.Add(i.ToString()+'|  '+matrix[i,0].ToString()+'|  '+matrix[i,1].ToString()+'|  '+matrix[i,2].ToString());
         end;
-  //Chart1.Series[0].Clear;
+  Chart1.Series[1].Clear;
 
         SetLength(vec,fcmObj.ClustersNum);
         SetLength(dis,fcmObj.ClustersNum);
@@ -214,13 +212,17 @@ begin
             if index = 1 then  color := $00144CF1;
             if index = 2  then  color := $00A8974E;
 
-           Chart1.Series[0].AddXY(v[Row].x ,v[Row].y,'',color);
+           Chart1.Series[1].AddXY(v[Row].x ,v[Row].y,'',color);
         end;
 
-     Chart1.Series[0].AddXY(centrs[0].x,centrs[0].y,'',32768);
-     Chart1.Series[0].AddXY(centrs[1].x,centrs[1].y,'',16776960);
-     Chart1.Series[0].AddXY(centrs[2].x,centrs[2].y,'',32896);
+     Chart1.Series[1].AddXY(centrs[0].x,centrs[0].y,'',32768);
+     Chart1.Series[1].AddXY(centrs[1].x,centrs[1].y,'',16776960);
+     Chart1.Series[1].AddXY(centrs[2].x,centrs[2].y,'',32896);
 
+  FormDataPCA.ObjPCA := PCObj;
+  FormDataPCA.left:=FormKeystrokeDynamics.left;
+  FormDataPCA.top:=FormKeystrokeDynamics.top;
+  FormDataPCA.Show;
 
   FreeAndNil(ext);
   FreeAndNil(PCObj);
@@ -232,23 +234,17 @@ procedure TFormKeystrokeDynamics.ButtonShowClick(Sender: TObject);
   Row,i: integer;
 begin
   Chart1.Series[0].Clear;
-  for i :=0 to Length(fileArray)-1 do
-  begin
-   for Row :=0 to Length(PC_Data[i][ComboBox1.ItemIndex])-1 do
-    begin
-       Chart1.Series[0].AddXY(PC_Data[i][ComboBox1.ItemIndex,Row] ,PC_Data[i][ComboBox2.ItemIndex,Row]);
-    end;
-  end;
 
-  for i :=0 to Length(fileArray)-1 do
-  begin
-   Chart1.Series[i+1].Clear;
-   Chart1.Series[i+1].Title := Copy(fileArray[i],15,Length(fileArray[i])-14);
-   for Row :=0 to Length(PC_Data[i][ComboBox1.ItemIndex])-1 do
+   for Row :=0 to Length(PC_Data[0][ComboBox1.ItemIndex])-1 do
     begin
-       Chart1.Series[i+1].AddXY(PC_Data[i][ComboBox1.ItemIndex,Row] ,PC_Data[i][ComboBox2.ItemIndex,Row]);
+       Chart1.Series[0].AddXY(PC_Data[0][ComboBox1.ItemIndex,Row] ,PC_Data[0][ComboBox2.ItemIndex,Row]);
     end;
-  end;
+ Chart1.Series[1].Clear;
+    for Row :=0 to Length(PC_Data[0][ComboBox1.ItemIndex])-1 do
+    begin
+       Chart1.Series[1].AddXY(PC_Data[0][ComboBox1.ItemIndex,Row] ,PC_Data[0][ComboBox2.ItemIndex,Row]);
+    end;
+  
 end;
 
 procedure TFormKeystrokeDynamics.ButtonStartClick(Sender: TObject);
@@ -260,22 +256,13 @@ end;
 
 procedure TFormKeystrokeDynamics.CheckBox1Click(Sender: TObject);
 begin
-  Data1.Visible := CheckBox1.Checked;
+  FCM.Visible := CheckBox1.Checked;
 end;
 
-procedure TFormKeystrokeDynamics.CheckBox2Click(Sender: TObject);
-begin
-   Data2.Visible := CheckBox2.Checked;
-end;
-
-procedure TFormKeystrokeDynamics.CheckBox3Click(Sender: TObject);
-begin
-   Data3.Visible := CheckBox3.Checked;
-end;
 
 procedure TFormKeystrokeDynamics.CheckBox4Click(Sender: TObject);
 begin
-   DataAll.Visible := CheckBox4.Checked;
+   PCA.Visible := CheckBox4.Checked;
 end;
 
 procedure TFormKeystrokeDynamics.ComboBox1Select(Sender: TObject);
@@ -308,9 +295,7 @@ end;
 
 procedure TFormKeystrokeDynamics.FormCreate(Sender: TObject);
 begin
-  // TrackBarRotation.Position := Chart1.View3DOptions.Rotation;
-  // TrackBarElevation.Position := Chart1.View3DOptions.Elevation;
-  // TrackBarZoom.Position := Chart1.View3DOptions.Zoom;
+
    // AssignFile(f, 'outfile.csv');
    // Rewrite(f); // Создать файл, если его ещё нет или очистить файл, если он есть
    // WriteLn(f,'Event_Type;Key_Code;Shift;Alt;Control;Time');
@@ -321,20 +306,12 @@ end;
 
 procedure TFormKeystrokeDynamics.FormDestroy(Sender: TObject);
 begin
+  FreeAndNil(ext);
+  FreeAndNil(PCObj);
   //logger.Active := false;
  // FreeAndNil(logger);
   //CloseFile(f); // Закрыть файл
 end;
 
-procedure TFormKeystrokeDynamics.TrackBarRotationChange(Sender: TObject);
-begin
-  // Chart1.View3DOptions.Rotation := TrackBarRotation.Position;
-  // Chart1.View3DOptions.Elevation := TrackBarElevation.Position;
-  // Chart1.View3DOptions.Zoom := TrackBarZoom.Position;
-  Chart1.ZoomPercent(100 - TrackBarZoom.Position);
-  Chart1.LeftAxis.Minimum:= -100;
-  Chart1.LeftAxis.Maximum:= 100;
-  Chart1.BottomAxis.PositionPercent:= 50;
-end;
 
 end.
