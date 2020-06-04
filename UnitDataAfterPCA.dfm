@@ -133,6 +133,7 @@ object FormDataPCA: TFormDataPCA
     ColorPaletteIndex = 13
     object Eigenvalues: TLineSeries
       HoverElement = [heCurrent]
+      Brush.BackColor = clDefault
       Pointer.InflateMargins = True
       Pointer.Style = psRectangle
       XValues.Name = 'X'
@@ -150,6 +151,8 @@ object FormDataPCA: TFormDataPCA
     TabOrder = 4
     object TabSheet1: TTabSheet
       Caption = #1053#1086#1088#1084#1080#1088#1086#1074#1072#1085#1099#1077' '#1076#1072#1085#1085#1099#1077
+      ExplicitLeft = 0
+      ExplicitTop = 0
       ExplicitWidth = 281
       ExplicitHeight = 165
       object StringGridNormData: TStringGrid
@@ -166,8 +169,6 @@ object FormDataPCA: TFormDataPCA
     object TabSheet2: TTabSheet
       Caption = #1052#1072#1090#1088#1080#1094#1072' '#1082#1086#1074#1072#1088#1080#1072#1094#1080#1081
       ImageIndex = 1
-      ExplicitWidth = 281
-      ExplicitHeight = 165
       object StringGridCovarMatrix: TStringGrid
         Left = 1
         Top = -4

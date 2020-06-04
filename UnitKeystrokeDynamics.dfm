@@ -93,7 +93,7 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
   end
   object CheckBox1: TCheckBox
     Left = 576
-    Top = 136
+    Top = 149
     Width = 97
     Height = 17
     Caption = 'FCM'
@@ -103,7 +103,7 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
     OnClick = CheckBox1Click
   end
   object Chart1: TChart
-    Left = 413
+    Left = 416
     Top = 188
     Width = 553
     Height = 386
@@ -114,7 +114,28 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
     TabOrder = 4
     DefaultCanvas = 'TGDIPlusCanvas'
     ColorPaletteIndex = 13
-    object PCA: TPointSeries
+    object A: TPointSeries
+      HoverElement = [heCurrent]
+      ClickableLine = False
+      Pointer.InflateMargins = True
+      Pointer.Style = psRectangle
+      XValues.Name = 'X'
+      XValues.Order = loAscending
+      YValues.Name = 'Y'
+      YValues.Order = loNone
+    end
+    object B: TPointSeries
+      HoverElement = [heCurrent]
+      SeriesColor = clLime
+      ClickableLine = False
+      Pointer.InflateMargins = True
+      Pointer.Style = psRectangle
+      XValues.Name = 'X'
+      XValues.Order = loAscending
+      YValues.Name = 'Y'
+      YValues.Order = loNone
+    end
+    object C: TPointSeries
       HoverElement = [heCurrent]
       ClickableLine = False
       Pointer.InflateMargins = True
@@ -136,8 +157,8 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
     end
   end
   object CheckBox4: TCheckBox
-    Left = 449
-    Top = 136
+    Left = 440
+    Top = 149
     Width = 97
     Height = 17
     Caption = 'PCA'
@@ -201,6 +222,25 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
       TabOrder = 2
       OnSelect = ComboBox2Select
     end
+  end
+  object Button5: TButton
+    Left = 440
+    Top = 118
+    Width = 233
+    Height = 25
+    Caption = #1040#1091#1090#1077#1085#1090#1080#1092#1080#1094#1080#1088#1086#1074#1072#1090#1100' '#1087#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1103
+    TabOrder = 8
+    OnClick = Button5Click
+  end
+  object Button6: TButton
+    Left = 894
+    Top = 65
+    Width = 99
+    Height = 54
+    Caption = #1057#1086#1073#1088#1072#1090#1100' '#1086#1089#1086#1073#1077#1085#1086#1089#1090#1080' '#1074' '#1086#1076#1080#1085' '#1092#1072#1081#1083
+    TabOrder = 9
+    WordWrap = True
+    OnClick = Button6Click
   end
   object OpenDialog1: TOpenDialog
     Left = 400

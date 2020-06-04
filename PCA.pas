@@ -139,6 +139,8 @@ type
   /// </param>
   procedure CalcAvg(AData: TMatrixDouble; var Av: Array of Double);
 
+  procedure SCalcPC(var aPCA:TPCA; aNormData:TMatrixDouble;d: Integer);
+
 implementation
 
 
@@ -470,7 +472,7 @@ begin
 
 
   CountPC := Length(Eigenvectors);
-  SortPC();
+  if(SortB) then SortPC();
   SetLength(PC,CountPC);
 
   CalcProportionPC();
@@ -480,6 +482,35 @@ begin
   begin
     SetLength(PC[i],Length(NormData[i]));
     PC[i,j] := Sum();
+  end;
+
+end;
+
+procedure SCalcPC(var aPCA:TPCA; aNormData:TMatrixDouble;d: Integer);
+var
+  i,j,err: integer;
+  e : TVector;
+  function Sum( ):Double;
+  var
+    k: integer;
+    Sum: Double;
+  begin
+    Sum := 0;
+    for k := 0 to High(aPCA.Eigenvectors[i]) do
+    begin
+      Sum := Sum + aPCA.Eigenvectors[i,k]* aNormData[k,j];
+    end;
+    Result := Sum;
+  end;
+begin
+
+  SetLength(aPCA.PC,aPCA.CountPC);
+
+  for i := 0 to d-1 do
+    for j := 0 to Length(aNormData[i])-1 do
+  begin
+    SetLength(aPCA.PC[i],Length(aNormData[i]));
+    aPCA.PC[i,j] := Sum();
   end;
 
 end;
