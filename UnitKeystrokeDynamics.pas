@@ -8,7 +8,7 @@ uses
   Vcl.StdCtrls, Vcl.Grids, VCLTee.Chart,Feature_Extractor
   ,Data_Time,DateUtils, TypesForKD, Vcl.Imaging.pngimage, VCLTee.Series,
   Vcl.ComCtrls, Lib_TRED2_TQLI2,PCA,FCM, VclTee.TeeGDIPlus, VCLTee.TeEngine,
-  Vcl.ExtCtrls, VCLTee.TeeProcs,Math, UnitDataAfterPCA;
+  Vcl.ExtCtrls, VCLTee.TeeProcs,Math, UnitDataAfterPCA,AuthKD;
 
 type
   TFormKeystrokeDynamics = class(TForm)
@@ -39,6 +39,7 @@ type
     Button6: TButton;
     C: TPointSeries;
     New: TPointSeries;
+    LabelAuth: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -70,7 +71,14 @@ var
   PCObj: TPCA;
   PC_Data :array of TMatrixDouble;
   new_PC_Data : array of TMatrixDouble;
-
+  split:TMatrixDouble;
+  countClasters : Integer;
+  Users: array [0..2] of String =
+  (
+    'A',
+    'B',
+    'C'
+  );
   fileArray : array [0..2] of String =
   (
     '.\Data\keylog_alina_feature.csv',
@@ -179,12 +187,14 @@ begin
   end;
 end;
 
+
+
 procedure TFormKeystrokeDynamics.Button4Click(Sender: TObject);
 var
   i,Row, color,index, count: integer;
   fcmObj : TFCM;
   v,centrs :TVectorPoints;
-  matrix : TMatrixDouble;
+  matrix,temp_matrix : TMatrixDouble;
   vec,dis: TVector;
 begin
   count :=0;
@@ -208,25 +218,15 @@ begin
   fcmObj := TFCM.Create(0.1,1000,Length(v),3);
 
    matrix := fcmObj.DistributeOverMatrixU(v,fcmObj.Fuzz,centrs);
+   countClasters := fcmObj.ClustersNum;
+   SortMatrixPoint(matrix,centrs,'y');
 
 
-   for i :=0 to Length(v)-1 do
-        begin
-        //  Memo1.Lines.Add(i.ToString()+'|  '+v[i].x.ToString()+'|  '+v[i].y.ToString());
-        end;
-
-       for i :=0 to Length(matrix)-1 do
-        begin
-       //   Memo1.Lines.Add(i.ToString()+'|  '+matrix[i,0].ToString()+'|  '+matrix[i,1].ToString()+'|  '+matrix[i,2].ToString());
-        end;
-  //Chart1.Series[1].Clear;
-
-        SetLength(vec,fcmObj.ClustersNum);
-        SetLength(dis,fcmObj.ClustersNum);
+       FindMatrixPoint(matrix,v,split);
        for Row :=0 to Length(v)-1 do
         begin
 
-            for i :=0 to Length(vec)-1 do
+            for i :=0 to Length(matrix[row])-1 do
             begin
               if matrix[row,i]>0.5 then
               begin
@@ -261,35 +261,45 @@ var
   i,j: Integer;
   new_ext: TExtractor;
   new_PCObj: TPCA;
-
+  auth_index: Integer;
+  User_str: string;
 begin
-  new_ext := TExtractor.Create();
+
   if opendialog1.Execute then
   begin
+    new_ext := TExtractor.Create();
     new_ext.LoadCSVFile(opendialog1.FileName,';',14,true);
-    ShowMessage('Успешно');
-
+    if PCObj = nil then
+    begin
+      ShowMessage('Ошибка загрузите первичные данные');
+      FreeAndNil(new_ext);
+      exit;
+    end;
 
     new_PCObj := TPCA.Create(new_ext);
     new_PCObj.CalcStats(new_PCObj.ExtractData);
-    //new_PCObj.NormalizationAndCenter;
-    //new_PCObj.CalcPC(true,14);
-    NormalizationAndCenter(PCObj,new_PCObj.ExtractData,new_PCObj.NormData);
-  SetLength(new_PC_Data,Length(fileArray));
+    SetLength(new_PC_Data,Length(fileArray));
+    auth_index := AuthUser(PCObj,new_PCObj,new_PC_Data[0],countClasters,PC_y,split);
 
-    SCalcPC(PCObj,new_PCObj.NormData,14);
-    new_PC_Data[0] := PCObj.PC;
      Chart1.Series[4].Clear;
-     // for i :=0 to Length(new_PC_Data[0])-1 do
-     // begin
+
        for j :=0 to Length(new_PC_Data[0][0])-1 do
         begin
            Chart1.Series[4].AddXY(new_PC_Data[0][PC_x,j] ,new_PC_Data[0][PC_y,j]);
         end;
-     // end;
+
+    if auth_index<>-1 then
+        User_str := Users[auth_index]
+      else
+        User_str := 'неизвестен';
+
+    LabelAuth.Caption := 'Пользователь ' +User_str;
+
+    ShowMessage('Пользователь ' +User_str);
     FreeAndNil(new_PCObj);
+    FreeAndNil(new_ext);
   end;
- FreeAndNil(new_ext);
+
 end;
 
 procedure TFormKeystrokeDynamics.Button6Click(Sender: TObject);

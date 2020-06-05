@@ -10,7 +10,8 @@ uses
   Lib_TRED2_TQLI2 in 'Lib_TRED2_TQLI2.pas',
   FCM in 'FCM.pas',
   TypesForKD in 'TypesForKD.pas',
-  UnitDataAfterPCA in 'UnitDataAfterPCA.pas' {FormDataPCA};
+  UnitDataAfterPCA in 'UnitDataAfterPCA.pas' {FormDataPCA},
+  AuthKD in 'AuthKD.pas';
 
 {$R *.res}
 

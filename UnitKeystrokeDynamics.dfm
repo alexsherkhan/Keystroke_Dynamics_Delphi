@@ -16,6 +16,13 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
+  object LabelAuth: TLabel
+    Left = 894
+    Top = 152
+    Width = 72
+    Height = 13
+    Caption = #1055#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1100
+  end
   object GroupBox1: TGroupBox
     Left = 24
     Top = 20
