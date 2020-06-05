@@ -38,6 +38,7 @@ type
     B: TPointSeries;
     Button6: TButton;
     C: TPointSeries;
+    New: TPointSeries;
     procedure FormCreate(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -163,8 +164,8 @@ begin
        ComboBox2.Items.Add((j+1).ToString());
     end;
 
-    ComboBox1.ItemIndex := 0;
-    ComboBox2.ItemIndex := 1;
+    ComboBox1.ItemIndex := PC_x;
+    ComboBox2.ItemIndex := PC_y;
   ShowMessage('Рассчет PCA успешен');
   FormDataPCA.ObjPCA := PCObj;
   FormDataPCA.left:=FormKeystrokeDynamics.left;
@@ -218,7 +219,7 @@ begin
         begin
        //   Memo1.Lines.Add(i.ToString()+'|  '+matrix[i,0].ToString()+'|  '+matrix[i,1].ToString()+'|  '+matrix[i,2].ToString());
         end;
-  Chart1.Series[1].Clear;
+  //Chart1.Series[1].Clear;
 
         SetLength(vec,fcmObj.ClustersNum);
         SetLength(dis,fcmObj.ClustersNum);
@@ -251,7 +252,7 @@ begin
   FormDataPCA.Show;
 
   FreeAndNil(ext);
-  FreeAndNil(PCObj);
+  //FreeAndNil(PCObj);
   FreeAndNil(fcmObj);
 end;
 
@@ -268,24 +269,26 @@ begin
     new_ext.LoadCSVFile(opendialog1.FileName,';',14,true);
     ShowMessage('Успешно');
 
-  end;
+
     new_PCObj := TPCA.Create(new_ext);
-    //new_PCObj.CalcStats(new_PCObj.ExtractData);
+    new_PCObj.CalcStats(new_PCObj.ExtractData);
     //new_PCObj.NormalizationAndCenter;
-    new_PCObj.CalcPC(true,14);
+    //new_PCObj.CalcPC(true,14);
+    NormalizationAndCenter(PCObj,new_PCObj.ExtractData,new_PCObj.NormData);
   SetLength(new_PC_Data,Length(fileArray));
 
     SCalcPC(PCObj,new_PCObj.NormData,14);
     new_PC_Data[0] := PCObj.PC;
-     Chart1.Series[2].Clear;
-      for i :=0 to Length(new_PC_Data[0])-1 do
-      begin
+     Chart1.Series[4].Clear;
+     // for i :=0 to Length(new_PC_Data[0])-1 do
+     // begin
        for j :=0 to Length(new_PC_Data[0][0])-1 do
         begin
-           Chart1.Series[2].AddXY(new_PC_Data[0][PC_x,j] ,new_PC_Data[0][PC_y,j]);
+           Chart1.Series[4].AddXY(new_PC_Data[0][PC_x,j] ,new_PC_Data[0][PC_y,j]);
         end;
-      end;
- FreeAndNil(new_PCObj);
+     // end;
+    FreeAndNil(new_PCObj);
+  end;
  FreeAndNil(new_ext);
 end;
 
@@ -313,20 +316,25 @@ begin
     Chart1.Series[0].Clear;
     Chart1.Series[1].Clear;
     Chart1.Series[2].Clear;
- for j :=0 to 161{Length(PCObj.PC[0])}-1 do
-        begin
+     { for j :=0 to 161{Length(PCObj.PC[0])-1 do
+      {  begin
            Chart1.Series[0].AddXY(PC_Data[0][ComboBox1.ItemIndex,j] ,PC_Data[0][ComboBox2.ItemIndex,j]);
         end;
-         for j :=162 to 322{Length(PCObj.PC[0])}-1 do
-        begin
+         for j :=162 to 322{Length(PCObj.PC[0])-1 do
+     {   begin
            Chart1.Series[1].AddXY(PC_Data[0][ComboBox1.ItemIndex,j] ,PC_Data[0][ComboBox2.ItemIndex,j]);
         end;
-        for j :=323 to 501{Length(PCObj.PC[0])}-1 do
-        begin
+        for j :=323 to 501{Length(PCObj.PC[0])-1 do
+      {  begin
            Chart1.Series[2].AddXY(PC_Data[0][ComboBox1.ItemIndex,j] ,PC_Data[0][ComboBox2.ItemIndex,j]);
         end;
-
-
+               }
+               Chart1.Series[4].Clear;
+      if new_PC_Data <>nil then
+        for j :=0 to Length(new_PC_Data[0][0])-1 do
+       begin
+           Chart1.Series[4].AddXY(new_PC_Data[0][ComboBox1.ItemIndex,j] ,new_PC_Data[0][ComboBox2.ItemIndex,j]);
+        end;
 end;
 
 procedure TFormKeystrokeDynamics.ButtonStartClick(Sender: TObject);

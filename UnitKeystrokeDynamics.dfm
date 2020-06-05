@@ -155,6 +155,17 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
       YValues.Name = 'Y'
       YValues.Order = loNone
     end
+    object New: TPointSeries
+      HoverElement = [heCurrent]
+      SeriesColor = clAqua
+      ClickableLine = False
+      Pointer.InflateMargins = True
+      Pointer.Style = psRectangle
+      XValues.Name = 'X'
+      XValues.Order = loAscending
+      YValues.Name = 'Y'
+      YValues.Order = loNone
+    end
   end
   object CheckBox4: TCheckBox
     Left = 440
@@ -234,7 +245,7 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
   end
   object Button6: TButton
     Left = 894
-    Top = 65
+    Top = 60
     Width = 99
     Height = 54
     Caption = #1057#1086#1073#1088#1072#1090#1100' '#1086#1089#1086#1073#1077#1085#1086#1089#1090#1080' '#1074' '#1086#1076#1080#1085' '#1092#1072#1081#1083

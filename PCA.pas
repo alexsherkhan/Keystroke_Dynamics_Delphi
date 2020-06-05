@@ -140,7 +140,7 @@ type
   procedure CalcAvg(AData: TMatrixDouble; var Av: Array of Double);
 
   procedure SCalcPC(var aPCA:TPCA; aNormData:TMatrixDouble;d: Integer);
-
+  procedure NormalizationAndCenter(aPCA: TPCA;ExtractData:TMatrixDouble; var NormData:TMatrixDouble);
 implementation
 
 
@@ -193,6 +193,21 @@ begin
     begin
       SetLength(NormData[Col],Length(ExtractData[Col]));
       NormData[Col, Row] := (ExtractData[Col, Row] - FAvgValue[Col]);
+    end;
+  end;
+end;
+
+procedure NormalizationAndCenter(aPCA: TPCA;ExtractData:TMatrixDouble; var NormData:TMatrixDouble);
+var Col, Row: integer;
+begin
+
+  for Col := 0 to Length(ExtractData)-1 do
+  begin
+    SetLength(NormData,Length(ExtractData));
+    for Row := 0 to Length(ExtractData[Col])-1 do
+    begin
+      SetLength(NormData[Col],Length(ExtractData[Col]));
+      NormData[Col, Row] := (ExtractData[Col, Row] - aPCA.FAvgValue[Col])/sqrt(aPCA.FDispersion[Col]);
     end;
   end;
 end;
