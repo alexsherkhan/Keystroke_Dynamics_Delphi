@@ -6,7 +6,7 @@ uses  Math,TypesForKD,PCA;
 procedure BubbleSortPoint(var A: TVectorPoints; Axis:string);
 function GetIndexCentrs(var a:TMatrixDouble;b:Double):integer;
 procedure SortMatrixPoint(var aMatrix: TMatrixDouble; centrs :TVectorPoints;Axis:string);
-procedure FindMatrixPoint(aMatrix: TMatrixDouble; v :TVectorPoints;var split:TMatrixDouble);
+procedure FindSplitClasters(aMatrix: TMatrixDouble; v :TVectorPoints;var split:TMatrixDouble);
 function AuthUser(PCObj:TPCA; new_PCObj:TPCA;var Data:TMatrixDouble;
           countClasters:Integer; PC_y:Integer; split:TMatrixDouble): Integer;
 
@@ -88,7 +88,7 @@ begin
 
 end;
 
-procedure FindMatrixPoint(aMatrix: TMatrixDouble; v :TVectorPoints;var split:TMatrixDouble);
+procedure FindSplitClasters(aMatrix: TMatrixDouble; v :TVectorPoints;var split:TMatrixDouble);
 var
   i,j,index: integer;
 begin
@@ -123,14 +123,9 @@ var
   i,j,k: Integer;
   count_in_Claster : array of Integer;
   auth_index, auth_max: Integer;
-  incognoto: Boolean;
 begin
-
     SetLength(count_in_Claster,countClasters);
-
-
     NormalizationAndCenter(PCObj,new_PCObj.ExtractData,new_PCObj.NormData);
-
     SCalcPC(PCObj,new_PCObj.NormData,14);
     Data := PCObj.PC;
 

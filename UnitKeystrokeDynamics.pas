@@ -190,7 +190,7 @@ begin
    SortMatrixPoint(matrix,centrs,'y');
 
 
-       FindMatrixPoint(matrix,v,split);
+       FindSplitClasters(matrix,v,split);
        for Row :=0 to Length(v)-1 do
         begin
 
