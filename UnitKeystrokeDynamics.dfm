@@ -22,6 +22,7 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
     Width = 72
     Height = 13
     Caption = #1055#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1100
+    WordWrap = True
   end
   object GroupBox1: TGroupBox
     Left = 24
@@ -98,16 +99,16 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
     TabOrder = 2
     OnClick = Button3Click
   end
-  object CheckBox1: TCheckBox
-    Left = 576
+  object CheckBoxFCM: TCheckBox
+    Left = 553
     Top = 149
-    Width = 97
+    Width = 41
     Height = 17
     Caption = 'FCM'
     Checked = True
     State = cbChecked
     TabOrder = 3
-    OnClick = CheckBox1Click
+    OnClick = CheckBoxFCMClick
   end
   object Chart1: TChart
     Left = 416
@@ -173,17 +174,27 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
       YValues.Name = 'Y'
       YValues.Order = loNone
     end
+    object PCA: TPointSeries
+      HoverElement = [heCurrent]
+      ClickableLine = False
+      Pointer.InflateMargins = True
+      Pointer.Style = psRectangle
+      XValues.Name = 'X'
+      XValues.Order = loAscending
+      YValues.Name = 'Y'
+      YValues.Order = loNone
+    end
   end
-  object CheckBox4: TCheckBox
-    Left = 440
+  object CheckBoxPCA: TCheckBox
+    Left = 494
     Top = 149
-    Width = 97
+    Width = 53
     Height = 17
     Caption = 'PCA'
     Checked = True
     State = cbChecked
     TabOrder = 5
-    OnClick = CheckBox4Click
+    OnClick = CheckBoxPCAClick
   end
   object Button4: TButton
     Left = 440
@@ -241,14 +252,14 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
       OnSelect = ComboBox2Select
     end
   end
-  object Button5: TButton
+  object ButtonAuth: TButton
     Left = 440
     Top = 118
     Width = 233
     Height = 25
     Caption = #1040#1091#1090#1077#1085#1090#1080#1092#1080#1094#1080#1088#1086#1074#1072#1090#1100' '#1087#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1103
     TabOrder = 8
-    OnClick = Button5Click
+    OnClick = ButtonAuthClick
   end
   object Button6: TButton
     Left = 894
@@ -259,6 +270,28 @@ object FormKeystrokeDynamics: TFormKeystrokeDynamics
     TabOrder = 9
     WordWrap = True
     OnClick = Button6Click
+  end
+  object CheckBoxNew_User: TCheckBox
+    Left = 608
+    Top = 149
+    Width = 65
+    Height = 17
+    Caption = 'New_User'
+    Checked = True
+    State = cbChecked
+    TabOrder = 10
+    OnClick = CheckBoxNew_UserClick
+  end
+  object CheckBoxTest: TCheckBox
+    Left = 431
+    Top = 149
+    Width = 57
+    Height = 17
+    Caption = 'Test'
+    Checked = True
+    State = cbChecked
+    TabOrder = 11
+    OnClick = CheckBoxTestClick
   end
   object OpenDialog1: TOpenDialog
     Left = 400

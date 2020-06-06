@@ -21,7 +21,7 @@ type
     LabelStatus: TLabel;
     Memo1: TMemo;
     Button3: TButton;
-    CheckBox1: TCheckBox;
+    CheckBoxFCM: TCheckBox;
     Chart1: TChart;
     FCM: TPointSeries;
     OpenDialog1: TOpenDialog;
@@ -31,15 +31,18 @@ type
     Label4: TLabel;
     Label5: TLabel;
     A: TPointSeries;
-    CheckBox4: TCheckBox;
+    CheckBoxPCA: TCheckBox;
     Button4: TButton;
     GroupBox2: TGroupBox;
-    Button5: TButton;
+    ButtonAuth: TButton;
     B: TPointSeries;
     Button6: TButton;
     C: TPointSeries;
     New: TPointSeries;
     LabelAuth: TLabel;
+    CheckBoxNew_User: TCheckBox;
+    PCA: TPointSeries;
+    CheckBoxTest: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -48,15 +51,17 @@ type
     procedure ButtonStartClick(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
-    procedure CheckBox1Click(Sender: TObject);
+    procedure CheckBoxFCMClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ButtonShowClick(Sender: TObject);
     procedure ComboBox1Select(Sender: TObject);
     procedure ComboBox2Select(Sender: TObject);
-    procedure CheckBox4Click(Sender: TObject);
+    procedure CheckBoxPCAClick(Sender: TObject);
     procedure Button4Click(Sender: TObject);
-    procedure Button5Click(Sender: TObject);
+    procedure ButtonAuthClick(Sender: TObject);
     procedure Button6Click(Sender: TObject);
+    procedure CheckBoxNew_UserClick(Sender: TObject);
+    procedure CheckBoxTestClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -116,32 +121,9 @@ procedure TFormKeystrokeDynamics.Button3Click(Sender: TObject);
 var
   i,j: integer;
 begin
-   {
-  for i :=0 to Length(fileArray)-1 do
-  begin
-    Chart1.Series[i].Clear;
-    ext := TExtractor.Create();
-    ext.LoadCSVFile(fileArray[i],';',14,true);
-    //ext.CalcStats(ext.ExtractData);
-    PCObj := TPCA.Create(ext);
-    PCObj.CalcPC(true,10);
-
-    SetLength(PC_Data,Length(fileArray));
-
-    PC_Data[i] := PCObj.PC;
-
-    FreeAndNil(ext);
-    FreeAndNil(PCObj);
-  end; }
-
    if opendialog1.Execute then
   begin
-    Chart1.Series[0].Clear;
-    Chart1.Series[1].Clear;
-    Chart1.Series[2].Clear;
-    Chart1.Series[3].Clear;
     ext := TExtractor.Create();
-    //CollectFiles('data',fileArray);
     ext.LoadCSVFile(opendialog1.FileName,';',2,true);
     PCObj := TPCA.Create(ext);
     PCObj.CalcPC(true,14);
@@ -149,22 +131,10 @@ begin
     SetLength(PC_Data,Length(fileArray));
 
     PC_Data[0] := PCObj.PC;
-     // for i :=0 to Length(PCObj.PC)-1 do
-     // begin
-       for j :=0 to 161-1 do
+       for j :=0 to High(PC_Data[0][0]) do
         begin
-           Chart1.Series[0].AddXY(PCObj.PC[0,j] ,PCObj.PC[1,j]);
+           Chart1.Series[5].AddXY(PCObj.PC[PC_x,j] ,PCObj.PC[PC_y,j]);
         end;
-         for j :=162 to 322-1 do
-        begin
-           Chart1.Series[1].AddXY(PCObj.PC[0,j] ,PCObj.PC[1,j]);
-        end;
-        for j :=323 to 501-1 do
-        begin
-           Chart1.Series[2].AddXY(PCObj.PC[0,j] ,PCObj.PC[1,j]);
-        end;
-     //end;
-
 
       for j :=0 to Length(PC_Data[0])-1 do
     begin
@@ -179,9 +149,7 @@ begin
   FormDataPCA.left:=FormKeystrokeDynamics.left;
   FormDataPCA.top:=FormKeystrokeDynamics.top;
   FormDataPCA.Show;
-
-  //FreeAndNil(ext);
-  //FreeAndNil(PCObj);
+  New.Visible := false;
 
   ButtonShowClick(nil);
   end;
@@ -198,11 +166,11 @@ var
   vec,dis: TVector;
 begin
   count :=0;
-
+  CheckBoxFCM.Checked := true;
   Button3Click(nil);
 
   SetLength(v,Length(PC_Data[0][0]));
-  for Row :=0 to Length(PC_Data[0][0])-1 do // while T do
+  for Row :=0 to Length(PC_Data[0][0])-1 do
         begin
           if (PC_Data[0][PC_y,Row]>1.5) or (PC_Data[0][PC_y,Row]<-1.5)
           or (PC_Data[0][PC_x,Row]>1.5) or (PC_Data[0][PC_x,Row]<-1.5) then
@@ -256,7 +224,7 @@ begin
   FreeAndNil(fcmObj);
 end;
 
-procedure TFormKeystrokeDynamics.Button5Click(Sender: TObject);
+procedure TFormKeystrokeDynamics.ButtonAuthClick(Sender: TObject);
 var
   i,j: Integer;
   new_ext: TExtractor;
@@ -275,6 +243,7 @@ begin
       FreeAndNil(new_ext);
       exit;
     end;
+    CheckBoxNew_User.Checked := true;
 
     new_PCObj := TPCA.Create(new_ext);
     new_PCObj.CalcStats(new_PCObj.ExtractData);
@@ -296,6 +265,7 @@ begin
     LabelAuth.Caption := 'Пользователь ' +User_str;
 
     ShowMessage('Пользователь ' +User_str);
+
     FreeAndNil(new_PCObj);
     FreeAndNil(new_ext);
   end;
@@ -312,39 +282,22 @@ procedure TFormKeystrokeDynamics.ButtonShowClick(Sender: TObject);
  var
   Row,i,j: integer;
 begin
- { Chart1.Series[2].Clear;
-   if new_PC_Data <>nil then
-   for Row :=0 to Length(new_PC_Data[0][ComboBox1.ItemIndex])-1 do
-    begin
-       Chart1.Series[2].AddXY(new_PC_Data[0][ComboBox1.ItemIndex,Row] ,new_PC_Data[0][ComboBox2.ItemIndex,Row]);
-    end;}
- {Chart1.Series[1].Clear;
-    for Row :=0 to Length(PC_Data[0][ComboBox1.ItemIndex])-1 do
-    begin
-       Chart1.Series[1].AddXY(PC_Data[0][ComboBox1.ItemIndex,Row] ,PC_Data[0][ComboBox2.ItemIndex,Row]);
-    end;                    }
     Chart1.Series[0].Clear;
     Chart1.Series[1].Clear;
     Chart1.Series[2].Clear;
-     { for j :=0 to 161{Length(PCObj.PC[0])-1 do
-      {  begin
-           Chart1.Series[0].AddXY(PC_Data[0][ComboBox1.ItemIndex,j] ,PC_Data[0][ComboBox2.ItemIndex,j]);
-        end;
-         for j :=162 to 322{Length(PCObj.PC[0])-1 do
-     {   begin
+      for j :=0 to 161-1 do
+        begin
            Chart1.Series[1].AddXY(PC_Data[0][ComboBox1.ItemIndex,j] ,PC_Data[0][ComboBox2.ItemIndex,j]);
         end;
-        for j :=323 to 501{Length(PCObj.PC[0])-1 do
-      {  begin
+         for j :=162 to 322-1 do
+        begin
            Chart1.Series[2].AddXY(PC_Data[0][ComboBox1.ItemIndex,j] ,PC_Data[0][ComboBox2.ItemIndex,j]);
         end;
-               }
-               Chart1.Series[4].Clear;
-      if new_PC_Data <>nil then
-        for j :=0 to Length(new_PC_Data[0][0])-1 do
-       begin
-           Chart1.Series[4].AddXY(new_PC_Data[0][ComboBox1.ItemIndex,j] ,new_PC_Data[0][ComboBox2.ItemIndex,j]);
+        for j :=323 to 501-1 do
+        begin
+           Chart1.Series[0].AddXY(PC_Data[0][ComboBox1.ItemIndex,j] ,PC_Data[0][ComboBox2.ItemIndex,j]);
         end;
+
 end;
 
 procedure TFormKeystrokeDynamics.ButtonStartClick(Sender: TObject);
@@ -354,15 +307,27 @@ begin
   LabelStatus.Caption := 'Статус: Идет сбор данных...';
 end;
 
-procedure TFormKeystrokeDynamics.CheckBox1Click(Sender: TObject);
+procedure TFormKeystrokeDynamics.CheckBoxTestClick(Sender: TObject);
 begin
-  FCM.Visible := CheckBox1.Checked;
+   A.Visible := CheckBoxTest.Checked;
+   B.Visible := CheckBoxTest.Checked;
+   C.Visible := CheckBoxTest.Checked;
+end;
+
+procedure TFormKeystrokeDynamics.CheckBoxFCMClick(Sender: TObject);
+begin
+  FCM.Visible := CheckBoxFCM.Checked;
 end;
 
 
-procedure TFormKeystrokeDynamics.CheckBox4Click(Sender: TObject);
+procedure TFormKeystrokeDynamics.CheckBoxNew_UserClick(Sender: TObject);
 begin
-   A.Visible := CheckBox4.Checked;
+  New.Visible := CheckBoxNew_User.Checked;
+end;
+
+procedure TFormKeystrokeDynamics.CheckBoxPCAClick(Sender: TObject);
+begin
+   PCA.Visible := CheckBoxPCA.Checked;
 end;
 
 procedure TFormKeystrokeDynamics.ComboBox1Select(Sender: TObject);
@@ -402,6 +367,10 @@ begin
    logger := TKeylogger.Create(nil);
    LabelStatus.Caption := 'Статус: Нет сбора данных';
    //logger.Active := true;
+   CheckBoxTest.Checked := false;
+   CheckBoxPCA.Checked := false;
+   CheckBoxNew_User.Checked := false;
+   CheckBoxFCM.Checked := false;
 end;
 
 procedure TFormKeystrokeDynamics.FormDestroy(Sender: TObject);
